@@ -57,10 +57,17 @@ function App() {
 
         <div className="header-controls">
           <div className="status-indicators">
-            <span className="status-pill offline">
-              <span className="status-dot"></span>
-              Offline (Mock)
-            </span>
+            {typeof window !== 'undefined' && window.electron ? (
+              <span className="status-pill desktop">
+                <span className="status-dot"></span>
+                Desktop (Local)
+              </span>
+            ) : (
+              <span className="status-pill offline">
+                <span className="status-dot"></span>
+                Browser (Mock)
+              </span>
+            )}
             
             {saveStatus === 'saving' && (
               <span className="status-pill saving">
@@ -95,7 +102,7 @@ function App() {
         {/* Sidebar Panel */}
         <aside className="dashboard-sidebar">
           <div className="sidebar-section">
-            <span className="sidebar-title">Virtual Workspaces</span>
+            <span className="sidebar-title">{typeof window !== 'undefined' && (window as any).electron ? 'Local Workspaces' : 'Virtual Workspaces'}</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
               {workspaces.map((path) => {
                 const name = path.split('/').pop() || path;
@@ -138,8 +145,13 @@ function App() {
               onCardClick={handleCardClick}
             />
           ) : (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-              Loading Kanban board configurations...
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', gap: '1rem' }}>
+              <span>{activeWorkspace ? 'Loading Kanban board configurations...' : 'No Workspace Loaded'}</span>
+              {!activeWorkspace && (
+                <button className="btn btn-primary" onClick={() => setIsWorkspaceModalOpen(true)}>
+                  📂 Browse or Add Workspace
+                </button>
+              )}
             </div>
           )}
         </main>

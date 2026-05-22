@@ -21,6 +21,18 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
 
   if (!isOpen) return null;
 
+  const handleBrowse = async () => {
+    try {
+      const path = await (window as any).electron.selectWorkspace();
+      if (path) {
+        onCreateWorkspace(path);
+        onClose();
+      }
+    } catch (err) {
+      // User cancelled
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPath.trim()) return;
@@ -36,6 +48,8 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
     onClose();
   };
 
+  const isElectron = typeof window !== 'undefined' && (window as any).electron;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -45,9 +59,20 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         </div>
         
         <div className="modal-body">
+          {isElectron && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              style={{ width: '100%', marginBottom: '1.25rem', justifyContent: 'center', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+              onClick={handleBrowse}
+            >
+              📂 Browse Local Directory...
+            </button>
+          )}
+
           <div className="form-group">
-            <label>Available Mock Workspaces</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <label>{isElectron ? 'Available Workspaces' : 'Available Mock Workspaces'}</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.5rem' }}>
               {workspaces.map((path) => {
                 const name = path.split('/').pop() || path;
                 const isActive = path === activeWorkspace;
@@ -68,28 +93,33 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                   </div>
                 );
               })}
+              {workspaces.length === 0 && (
+                <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.02)', borderRadius: '0.375rem', fontSize: '0.85rem' }}>
+                  No workspaces added yet. {isElectron ? 'Browse a folder to get started.' : ''}
+                </div>
+              )}
             </div>
           </div>
           
-          <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '1.5rem 0' }} />
+          <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '1.25rem 0' }} />
           
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="workspace-path">Create New Virtual Workspace</label>
+              <label htmlFor="workspace-path">{isElectron ? 'Add Workspace Path' : 'Create New Virtual Workspace'}</label>
               <div className="add-column-input-group" style={{ marginTop: '0.5rem' }}>
                 <input
                   id="workspace-path"
                   type="text"
                   className="input-field"
-                  placeholder="e.g. Project-Delta or /Users/mock/Custom-Path"
+                  placeholder={isElectron ? 'e.g. /absolute/path/to/project' : 'e.g. Project-Delta or /Users/mock/Custom-Path'}
                   value={newPath}
                   onChange={(e) => setNewPath(e.target.value)}
                   style={{ flex: 1 }}
                 />
-                <button type="submit" className="btn btn-primary">Create</button>
+                <button type="submit" className="btn btn-primary">{isElectron ? 'Add' : 'Create'}</button>
               </div>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Prefixes automatically with `/Users/mock/` if absolute path is not specified.
+                {isElectron ? 'Specify absolute path on your filesystem.' : 'Prefixes automatically with `/Users/mock/` if absolute path is not specified.'}
               </span>
             </div>
           </form>

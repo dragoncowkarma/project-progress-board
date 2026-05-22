@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { MockFileSystemAdapter } from 'shared';
+import { MockFileSystemAdapter, ElectronIPCAdapter } from 'shared';
 import type { KanbanBoardConfig, KanbanTask } from 'shared';
 
-const adapter = new MockFileSystemAdapter();
+const adapter = typeof window !== 'undefined' && (window as any).electron
+  ? new ElectronIPCAdapter()
+  : new MockFileSystemAdapter();
 const WORKSPACE_LIST_KEY = 'VITE_MOCK_STORAGE_KEY_WORKSPACES';
 
 export type SaveStatus = 'saved' | 'saving' | 'error';
@@ -19,11 +21,12 @@ export function useKanban() {
 
   // Initialize workspaces list and active workspace
   useEffect(() => {
+    const isElectron = typeof window !== 'undefined' && (window as any).electron;
     const stored = localStorage.getItem(WORKSPACE_LIST_KEY);
     let list: string[] = [];
     if (stored) {
       list = JSON.parse(stored);
-    } else {
+    } else if (!isElectron) {
       list = [
         '/Users/mock/Product-Roadmap',
         '/Users/mock/Personal-Tasks',
@@ -33,10 +36,14 @@ export function useKanban() {
     }
     setWorkspaces(list);
 
-    const active = localStorage.getItem('current_active_mock_workspace') || list[0];
-    localStorage.setItem('current_active_mock_workspace', active);
-    setActiveWorkspace(active);
-    loadWorkspace(active);
+    const active = localStorage.getItem('current_active_mock_workspace') || (list.length > 0 ? list[0] : '');
+    if (active) {
+      localStorage.setItem('current_active_mock_workspace', active);
+      setActiveWorkspace(active);
+      loadWorkspace(active);
+    } else {
+      setSaveStatus('saved');
+    }
   }, []);
 
   // Workspace loading logic
