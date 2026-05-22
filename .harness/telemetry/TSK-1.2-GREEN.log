@@ -1,0 +1,66 @@
+TAP version 13
+# Subtest: selectWorkspace - should return default workspace path
+ok 1 - selectWorkspace - should return default workspace path
+  ---
+  duration_ms: 1.763196
+  type: 'test'
+  ...
+# Subtest: selectWorkspace - should return active workspace if set
+ok 2 - selectWorkspace - should return active workspace if set
+  ---
+  duration_ms: 0.577726
+  type: 'test'
+  ...
+# Subtest: hasBoardConfig - should return false if board.json is not present
+ok 3 - hasBoardConfig - should return false if board.json is not present
+  ---
+  duration_ms: 0.474775
+  type: 'test'
+  ...
+# Subtest: hasBoardConfig - should return true if board.json is present
+ok 4 - hasBoardConfig - should return true if board.json is present
+  ---
+  duration_ms: 2.437529
+  type: 'test'
+  ...
+# Subtest: readBoardConfig - should initialize and return default board config if not exists
+ok 5 - readBoardConfig - should initialize and return default board config if not exists
+  ---
+  duration_ms: 1.17312
+  type: 'test'
+  ...
+# Subtest: writeBoardConfig - should serialize and write board config to localStorage
+ok 6 - writeBoardConfig - should serialize and write board config to localStorage
+  ---
+  duration_ms: 0.534437
+  type: 'test'
+  ...
+# Subtest: readTextFile - should throw error if file does not exist
+ok 7 - readTextFile - should throw error if file does not exist
+  ---
+  duration_ms: 1.19042
+  type: 'test'
+  ...
+# Subtest: writeTextFile and readTextFile - should write and read text content
+ok 8 - writeTextFile and readTextFile - should write and read text content
+  ---
+  duration_ms: 0.520557
+  type: 'test'
+  ...
+# Subtest: listFiles - should list all files under the workspace path
+ok 9 - listFiles - should list all files under the workspace path
+  ---
+  duration_ms: 3.482631
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 899.990304
+
+[salt:TSK-1.2-GREEN:1779475525.N]

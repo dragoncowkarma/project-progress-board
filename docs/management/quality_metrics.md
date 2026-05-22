@@ -4,18 +4,20 @@
 This report tracks system quality based on automated telemetry data.
 
 ## 2. Maintainability Metrics
-- **Line Coverage (Avg):** 93.62%
-- **Total Tasks:** 1
-- **Retry Rate:** 300.00%
+- **Line Coverage (Avg):** 96.81%
+- **Total Tasks:** 3
+- **Retry Rate:** 100.00%
 
 ## 3. Reliability Metrics
 - **Success Rate:** 100.00%
-- **Avg Duration:** 12.00s
+- **Avg Duration:** 7.33s
 
 ## 4. Detailed Task Metrics
 | Task ID | Status | Coverage | Mutation Score | Duration | Retries |
 |---------|--------|----------|----------------|----------|---------|
 | TSK-1.1 | Verified | 93.62% | N/A | 12s | 3 |
+| TSK-1.2-GREEN | Verified | 100.00% | N/A | 4s | 0 |
+| TSK-1.2-RED | Verified | RED | N/A | 6s | 0 |
 
 ## 5. Cost & Token Dashboard
 
@@ -23,6 +25,8 @@ This report tracks system quality based on automated telemetry data.
 | Task ID | Tokens Used |
 |---------|-------------|
 | TSK-1.1 | 0 |
+| TSK-1.2-GREEN | 0 |
+| TSK-1.2-RED | 0 |
 
 ### 5.2 Aggregate Cost Metrics
 | Metric | Value |

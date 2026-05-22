@@ -1,6 +1,6 @@
 {
   "id": "TSK-1.2-GREEN",
-  "status": "Ready",
+  "status": "Verified",
   "description": "Implement MockFileSystemAdapter methods to satisfy all unit tests and achieve 80%+ line coverage.",
   "agent": "Antigravity",
   "depends_on": [
@@ -13,11 +13,14 @@
   "metrics": {
     "tokens_used": 0,
     "retry_count": 0,
-    "duration_seconds": 0
+    "duration_seconds": 4,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
   },
   "approved": false,
-  "telemetry_hash": null,
+  "telemetry_hash": "f4d640866ff9e44daab451f775d51fa2ae3d8f67d7dee232cb3dab89205c279a",
   "assigned_sub_agent": "DEV",
   "sub_task_status": "Pending",
-  "delta_note": "Implementing MockFileSystemAdapter to satisfy unit tests."
+  "delta_note": "Implementing MockFileSystemAdapter to satisfy unit tests.",
+  "verification_mode": "standard"
 }
