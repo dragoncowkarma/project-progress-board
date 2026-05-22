@@ -1,0 +1,26 @@
+{
+  "id": "TSK-2.2",
+  "status": "Verified",
+  "description": "Implement interactive HTML5 drag-and-drop mechanics in KanbanBoard component for sorting tasks within and across columns, and reordering columns.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-2.1"
+  ],
+  "mechanical_dod": {
+    "command": "node scripts/check-dnd-logic.js",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 0,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "3373c2c8d95b744f0542524da18a6f98fb11828ac4f9c22c8fa3b544ff0ab4d9",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Implementing Drag-and-Drop board interaction handlers.",
+  "verification_mode": "standard"
+}
