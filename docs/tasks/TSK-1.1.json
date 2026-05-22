@@ -1,0 +1,24 @@
+{
+  "id": "TSK-1.1",
+  "status": "Verified",
+  "description": "Configure Turborepo monorepo with npm workspaces and create packages/shared folder structure with base configuration files.",
+  "agent": "Antigravity",
+  "depends_on": [],
+  "mechanical_dod": {
+    "command": "npx c8 --reporter=lcov node scripts/check-workspace.js",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 3,
+    "duration_seconds": 12,
+    "coverage": "93.62%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "70b08a295b132532278148b075dbed883f9a86a36bcc9fe37498bfc896173447",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Scaffolding the monorepo configuration.",
+  "verification_mode": "standard"
+}

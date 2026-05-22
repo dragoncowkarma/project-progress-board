@@ -1,0 +1,11 @@
+import { FileInfo, KanbanBoardConfig } from '../types';
+
+export interface IFileSystemAdapter {
+  selectWorkspace(): Promise<string>;
+  hasBoardConfig(workspacePath: string): Promise<boolean>;
+  readBoardConfig(workspacePath: string): Promise<KanbanBoardConfig>;
+  writeBoardConfig(workspacePath: string, config: KanbanBoardConfig): Promise<void>;
+  listFiles(workspacePath: string): Promise<FileInfo[]>;
+  readTextFile(filePath: string): Promise<string>;
+  writeTextFile(filePath: string, content: string): Promise<void>;
+}
