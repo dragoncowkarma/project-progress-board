@@ -1,0 +1,26 @@
+{
+  "id": "TSK-2.4",
+  "status": "Verified",
+  "description": "Implement Task details modal panel, double-pane markdown previewer, checklist CRUD items editor, and debounced 1-second auto-save indicator loops.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-2.3"
+  ],
+  "mechanical_dod": {
+    "command": "node scripts/check-autosave-markdown.js",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 0,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "2464e7450707d06b3661c5710e16ac35f68582eb42f2c6ff68e121f6d98b57eb",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Implementing task details, checklist and autosave indicators.",
+  "verification_mode": "standard"
+}
