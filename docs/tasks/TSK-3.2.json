@@ -1,6 +1,6 @@
 {
   "id": "TSK-3.2",
-  "status": "Ready",
+  "status": "Verified",
   "description": "Write apps/desktop_shell/src/preload.ts exposing safe contextBridge channel whitelists in isolation.",
   "agent": "Antigravity",
   "depends_on": [
@@ -13,10 +13,12 @@
   "metrics": {
     "tokens_used": 0,
     "retry_count": 0,
-    "duration_seconds": 0
+    "duration_seconds": 2,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
   },
   "approved": false,
-  "telemetry_hash": null,
+  "telemetry_hash": "3f71bdc4892d6c546ac2e0e3938e4957e2066c0dc37ea3938d0ffbeb43d0f93f",
   "assigned_sub_agent": null,
   "sub_task_status": "Pending",
   "delta_note": "Building preload contextBridge exposer.",
