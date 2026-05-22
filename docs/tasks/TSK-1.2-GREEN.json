@@ -1,0 +1,23 @@
+{
+  "id": "TSK-1.2-GREEN",
+  "status": "Ready",
+  "description": "Implement MockFileSystemAdapter methods to satisfy all unit tests and achieve 80%+ line coverage.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-1.2-RED"
+  ],
+  "mechanical_dod": {
+    "command": "npx c8 --reporter=lcov npx tsx --test packages/shared/tests/MockFileSystemAdapter.test.ts",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 0
+  },
+  "approved": false,
+  "telemetry_hash": null,
+  "assigned_sub_agent": "DEV",
+  "sub_task_status": "Pending",
+  "delta_note": "Implementing MockFileSystemAdapter to satisfy unit tests."
+}

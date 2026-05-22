@@ -1,0 +1,26 @@
+{
+  "id": "TSK-1.2-RED",
+  "status": "Verified",
+  "description": "Write failing tests for IFileSystemAdapter and MockFileSystemAdapter to assert storage simulation behavior.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-1.1"
+  ],
+  "mechanical_dod": {
+    "command": "npx c8 --reporter=lcov npx tsx --test packages/shared/tests/MockFileSystemAdapter.test.ts",
+    "expected_exit_code": 1
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 6,
+    "coverage": "RED",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "9784bc02325154dcedd4a1fde058ccd5c5a55cfec75896720ad91b7364ee24b3",
+  "assigned_sub_agent": "QA",
+  "sub_task_status": "Pending",
+  "delta_note": "Creating failing tests for the adapter.",
+  "verification_mode": "tdd-red"
+}

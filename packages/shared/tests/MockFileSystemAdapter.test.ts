@@ -1,0 +1,129 @@
+import { test, before, beforeEach } from 'node:test';
+import assert from 'node:assert';
+import { MockFileSystemAdapter } from '../src/adapters/MockFileSystemAdapter';
+import { KanbanBoardConfig } from '../src/types';
+
+// Setup LocalStorage polyfill for Node.js
+const mockLocalStorage: Record<string, string> = {};
+
+before(() => {
+  globalThis.localStorage = {
+    getItem: (key: string) => mockLocalStorage[key] || null,
+    setItem: (key: string, value: string) => { mockLocalStorage[key] = value; },
+    removeItem: (key: string) => { delete mockLocalStorage[key]; },
+    clear: () => {
+      for (const key in mockLocalStorage) {
+        delete mockLocalStorage[key];
+      }
+    },
+    get length() { return Object.keys(mockLocalStorage).length; },
+    key: (index: number) => Object.keys(mockLocalStorage)[index] || null
+  };
+});
+
+beforeEach(() => {
+  localStorage.clear();
+});
+
+test('selectWorkspace - should return default workspace path', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const path = await adapter.selectWorkspace();
+  assert.strictEqual(path, '/Users/mock/default-workspace');
+});
+
+test('selectWorkspace - should return active workspace if set', async () => {
+  const adapter = new MockFileSystemAdapter();
+  localStorage.setItem('current_active_mock_workspace', '/Users/mock/my-board');
+  const path = await adapter.selectWorkspace();
+  assert.strictEqual(path, '/Users/mock/my-board');
+});
+
+test('hasBoardConfig - should return false if board.json is not present', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const result = await adapter.hasBoardConfig('/Users/mock/my-board');
+  assert.strictEqual(result, false);
+});
+
+test('hasBoardConfig - should return true if board.json is present', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const config: KanbanBoardConfig = {
+    version: '1.0.0',
+    boardName: 'Test Board',
+    columns: [],
+    tasks: {},
+    metadata: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+  };
+  await adapter.writeBoardConfig('/Users/mock/my-board', config);
+  const result = await adapter.hasBoardConfig('/Users/mock/my-board');
+  assert.strictEqual(result, true);
+});
+
+test('readBoardConfig - should initialize and return default board config if not exists', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const workspace = '/Users/mock/my-board';
+  const config = await adapter.readBoardConfig(workspace);
+  assert.strictEqual(config.version, '1.0.0');
+  assert.strictEqual(config.boardName, 'New Mock Workspace');
+  assert.strictEqual(config.columns.length, 3);
+  assert.ok(config.tasks['task-1']);
+  
+  // Verify it auto-saved to localStorage
+  const hasConfig = await adapter.hasBoardConfig(workspace);
+  assert.strictEqual(hasConfig, true);
+});
+
+test('writeBoardConfig - should serialize and write board config to localStorage', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const workspace = '/Users/mock/my-board';
+  const config: KanbanBoardConfig = {
+    version: '2.0.0',
+    boardName: 'Custom Board',
+    columns: [{ id: 'c1', title: 'To Do', taskIds: [] }],
+    tasks: {},
+    metadata: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+  };
+  await adapter.writeBoardConfig(workspace, config);
+  const loaded = await adapter.readBoardConfig(workspace);
+  assert.strictEqual(loaded.version, '2.0.0');
+  assert.strictEqual(loaded.boardName, 'Custom Board');
+  assert.strictEqual(loaded.columns[0].title, 'To Do');
+});
+
+test('readTextFile - should throw error if file does not exist', async () => {
+  const adapter = new MockFileSystemAdapter();
+  await assert.rejects(
+    async () => { await adapter.readTextFile('/Users/mock/non-existent.txt'); },
+    /File not found/
+  );
+});
+
+test('writeTextFile and readTextFile - should write and read text content', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const filePath = '/Users/mock/my-board/docs/notes.md';
+  const content = '# Project Notes\nHello World';
+  await adapter.writeTextFile(filePath, content);
+  const readContent = await adapter.readTextFile(filePath);
+  assert.strictEqual(readContent, content);
+});
+
+test('listFiles - should list all files under the workspace path', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const workspace = '/Users/mock/my-board';
+  
+  await adapter.writeTextFile('/Users/mock/my-board/notes.md', 'some notes');
+  await adapter.writeTextFile('/Users/mock/my-board/docs/todo.txt', 'do something');
+  await adapter.writeTextFile('/Users/mock/another-board/notes.md', 'other notes'); // should not list this
+  
+  const files = await adapter.listFiles(workspace);
+  
+  assert.strictEqual(files.length, 2);
+  const fileNames = files.map(f => f.name);
+  assert.ok(fileNames.includes('notes.md'));
+  assert.ok(fileNames.includes('todo.txt'));
+  
+  const notesFile = files.find(f => f.name === 'notes.md');
+  assert.ok(notesFile);
+  assert.strictEqual(notesFile.path, '/Users/mock/my-board/notes.md');
+  assert.strictEqual(notesFile.type, 'file');
+  assert.ok(notesFile.sizeBytes > 0);
+});
