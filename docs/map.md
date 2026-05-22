@@ -7,3 +7,4 @@
 | `KanbanTask` | `packages/shared/src/types/index.ts` | Interface | Kanban task card details schema. |
 | `IFileSystemAdapter` | `packages/shared/src/interfaces/index.ts` | Interface | FileSystem adapter interface contract. |
 | `MockFileSystemAdapter` | `packages/shared/src/adapters/MockFileSystemAdapter.ts` | Class | LocalStorage-based simulated filesystem adapter. |
+| `ElectronIPCAdapter` | `packages/shared/src/adapters/ElectronIPCAdapter.ts` | Class | Electron ContextBridge-based filesystem adapter. |
