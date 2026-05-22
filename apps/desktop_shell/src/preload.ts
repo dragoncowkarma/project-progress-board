@@ -1,0 +1,11 @@
+import { contextBridge, ipcRenderer } from 'electron';
+
+contextBridge.exposeInMainWorld('electron', {
+  selectWorkspace: () => ipcRenderer.invoke('fs:select-workspace'),
+  hasBoardConfig: (path: string) => ipcRenderer.invoke('fs:has-config', path),
+  readBoardConfig: (path: string) => ipcRenderer.invoke('fs:read-config', path),
+  writeBoardConfig: (path: string, config: any) => ipcRenderer.invoke('fs:write-config', path, config),
+  listFiles: (path: string) => ipcRenderer.invoke('fs:list-files', path),
+  readTextFile: (path: string) => ipcRenderer.invoke('fs:read-file', path),
+  writeTextFile: (path: string, content: string) => ipcRenderer.invoke('fs:write-file', path, content),
+});

@@ -1,0 +1,26 @@
+{
+  "id": "TSK-3.1",
+  "status": "Verified",
+  "description": "Configure apps/desktop_shell, package.json dependencies, typescript compilation settings, and create the main process file main.ts to initialize BrowserWindow and handle IPC channels.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-2.4"
+  ],
+  "mechanical_dod": {
+    "command": "node scripts/check-electron-scaffold.js",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 6,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "555f6b148926a1dc9d73cd01adb8935fd883ba541e114cfc2739e2624b41f17c",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Scaffolding Electron app and configuring IPC handler bounds.",
+  "verification_mode": "standard"
+}

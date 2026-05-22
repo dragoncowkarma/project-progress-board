@@ -1,0 +1,24 @@
+{
+  "id": "TSK-3.3",
+  "status": "Ready",
+  "description": "Implement ElectronIPCAdapter in shared package, write unit tests mock validating its behavior, export the class, and tie to dynamic runtime instantiation in useKanban.ts.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-3.2"
+  ],
+  "mechanical_dod": {
+    "command": "npm run test -w shared",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 0
+  },
+  "approved": false,
+  "telemetry_hash": null,
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Implementing ElectronIPCAdapter and runtime factory integration.",
+  "verification_mode": "standard"
+}
