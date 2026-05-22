@@ -1,0 +1,26 @@
+{
+  "id": "TSK-2.1",
+  "status": "Verified",
+  "description": "Initialize apps/web_frontend workspace, configure Vite/TypeScript build config with relative paths, write Vanilla CSS theme layout, and build main App shell component.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-1.2-GREEN"
+  ],
+  "mechanical_dod": {
+    "command": "node scripts/check-frontend-scaffold.js",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 1,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "4a5a446103a8f73b4336d713102b9ac045a3eaa8a86f35cde8d0699a9730aceb",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Scaffolding Vite React workspace and UI layout.",
+  "verification_mode": "standard"
+}
