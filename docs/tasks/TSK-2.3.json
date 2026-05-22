@@ -1,0 +1,26 @@
+{
+  "id": "TSK-2.3",
+  "status": "Verified",
+  "description": "Implement the WorkspaceSelector dialog overlay modal allowing creation and selection of custom workspace directories, and wire to the MockFileSystemAdapter.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-2.2"
+  ],
+  "mechanical_dod": {
+    "command": "node scripts/check-workspace-selection.js",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 0,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "97e6e9470da8623f4dfdba0c380c020dab1e1dc74aa1facbe2450071b55e46b4",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Implementing workspace modal switcher component.",
+  "verification_mode": "standard"
+}
