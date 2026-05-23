@@ -1,10 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { MockFileSystemAdapter, ElectronIPCAdapter } from 'shared';
+import { MockFileSystemAdapter, ElectronIPCAdapter, DevFileSystemAdapter } from 'shared';
 import type { KanbanBoardConfig, KanbanTask } from 'shared';
 
-const adapter = typeof window !== 'undefined' && window.electron
+const isElectron = typeof window !== 'undefined' && !!window.electron;
+const isDevLocal = typeof window !== 'undefined' && import.meta.env.DEV;
+
+const adapter = isElectron
   ? new ElectronIPCAdapter()
-  : new MockFileSystemAdapter();
+  : isDevLocal
+    ? new DevFileSystemAdapter()
+    : new MockFileSystemAdapter();
 const WORKSPACE_LIST_KEY = 'VITE_MOCK_STORAGE_KEY_WORKSPACES';
 
 export type SaveStatus = 'saved' | 'saving' | 'error';
@@ -12,11 +17,19 @@ export type SaveStatus = 'saved' | 'saving' | 'error';
 export function useKanban() {
   // Initialize workspaces list state
   const [workspaces, setWorkspaces] = useState<string[]>(() => {
-    const isElectron = typeof window !== 'undefined' && !!window.electron;
     const stored = localStorage.getItem(WORKSPACE_LIST_KEY);
     if (stored) {
-      return JSON.parse(stored) as string[];
-    } else if (!isElectron) {
+      const list = JSON.parse(stored) as string[];
+      if (isElectron || isDevLocal) {
+        // Filter out mock paths for local/desktop environments
+        const filtered = list.filter(p => !p.startsWith('/Users/mock/'));
+        if (filtered.length !== list.length) {
+          localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(filtered));
+        }
+        return filtered;
+      }
+      return list;
+    } else if (!isElectron && !isDevLocal) {
       const list = [
         '/Users/mock/Product-Roadmap',
         '/Users/mock/Personal-Tasks',
@@ -30,21 +43,33 @@ export function useKanban() {
 
   // Initialize active workspace state
   const [activeWorkspace, setActiveWorkspace] = useState<string>(() => {
-    const isElectron = typeof window !== 'undefined' && !!window.electron;
     const stored = localStorage.getItem(WORKSPACE_LIST_KEY);
     let list: string[] = [];
     if (stored) {
       list = JSON.parse(stored) as string[];
-    } else if (!isElectron) {
+      if (isElectron || isDevLocal) {
+        list = list.filter(p => !p.startsWith('/Users/mock/'));
+      }
+    } else if (!isElectron && !isDevLocal) {
       list = [
         '/Users/mock/Product-Roadmap',
         '/Users/mock/Personal-Tasks',
         '/Users/mock/Enterprise-Core-SDK'
       ];
     }
-    const active = localStorage.getItem('current_active_mock_workspace') || (list.length > 0 ? list[0] : '');
+    let active = localStorage.getItem('current_active_mock_workspace') || '';
+    if (isElectron || isDevLocal) {
+      if (active.startsWith('/Users/mock/')) {
+        active = '';
+      }
+    }
+    if (!active && list.length > 0) {
+      active = list[0];
+    }
     if (active) {
       localStorage.setItem('current_active_mock_workspace', active);
+    } else {
+      localStorage.removeItem('current_active_mock_workspace');
     }
     return active;
   });
@@ -320,6 +345,25 @@ export function useKanban() {
     updateBoardConfigState(newConfig);
   };
 
+  const browseWorkspace = useCallback(async () => {
+    try {
+      const path = await adapter.selectWorkspace();
+      if (path) {
+        handleCreateWorkspace(path);
+        return path;
+      }
+      return null;
+    } catch (err) {
+      return null;
+    }
+  }, [handleCreateWorkspace]);
+
+  const envName = isElectron
+    ? 'desktop'
+    : isDevLocal
+      ? 'dev-local'
+      : 'mock';
+
   return {
     activeWorkspace,
     boardConfig,
@@ -336,6 +380,8 @@ export function useKanban() {
     updateTask,
     deleteTask,
     moveTask,
-    moveColumn
+    moveColumn,
+    browseWorkspace,
+    envName
   };
 }

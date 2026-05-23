@@ -24,6 +24,8 @@ function App() {
     deleteTask,
     moveTask,
     moveColumn,
+    browseWorkspace,
+    envName,
   } = useKanban();
 
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
@@ -57,12 +59,19 @@ function App() {
 
         <div className="header-controls">
           <div className="status-indicators">
-            {typeof window !== 'undefined' && window.electron ? (
+            {envName === 'desktop' && (
               <span className="status-pill desktop">
                 <span className="status-dot"></span>
                 Desktop (Local)
               </span>
-            ) : (
+            )}
+            {envName === 'dev-local' && (
+              <span className="status-pill dev-local" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.2)' }}>
+                <span className="status-dot" style={{ backgroundColor: '#3b82f6' }}></span>
+                Browser (Dev Local)
+              </span>
+            )}
+            {envName === 'mock' && (
               <span className="status-pill offline">
                 <span className="status-dot"></span>
                 Browser (Mock)
@@ -102,7 +111,7 @@ function App() {
         {/* Sidebar Panel */}
         <aside className="dashboard-sidebar">
           <div className="sidebar-section">
-            <span className="sidebar-title">{typeof window !== 'undefined' && window.electron ? 'Local Workspaces' : 'Virtual Workspaces'}</span>
+            <span className="sidebar-title">{envName !== 'mock' ? 'Local Workspaces' : 'Virtual Workspaces'}</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
               {workspaces.map((path) => {
                 const name = path.split('/').pop() || path;
@@ -165,6 +174,8 @@ function App() {
         activeWorkspace={activeWorkspace}
         onSelectWorkspace={handleSelectWorkspace}
         onCreateWorkspace={handleCreateWorkspace}
+        onBrowseWorkspace={envName !== 'mock' ? browseWorkspace : undefined}
+        isLocalEnv={envName !== 'mock'}
       />
 
       {/* Task Editor Properties Modal */}

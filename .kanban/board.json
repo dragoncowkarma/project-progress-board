@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "boardName": "project-progress-board",
+  "columns": [
+    {
+      "id": "col-1",
+      "title": "Backlog",
+      "taskIds": [
+        "task-1"
+      ]
+    },
+    {
+      "id": "col-2",
+      "title": "In Progress",
+      "taskIds": []
+    },
+    {
+      "id": "col-3",
+      "title": "Done",
+      "taskIds": []
+    }
+  ],
+  "tasks": {
+    "task-1": {
+      "id": "task-1",
+      "title": "Welcome to Kanban Board",
+      "description": "This is a local dev card. Feel free to edit or drag-and-drop it.",
+      "priority": "medium",
+      "checklists": []
+    }
+  },
+  "metadata": {
+    "createdAt": "2026-05-23T10:42:42.360Z",
+    "updatedAt": "2026-05-23T10:42:42.360Z"
+  }
+}

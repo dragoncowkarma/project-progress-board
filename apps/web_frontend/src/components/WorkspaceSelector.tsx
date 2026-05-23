@@ -7,6 +7,8 @@ interface WorkspaceSelectorProps {
   activeWorkspace: string;
   onSelectWorkspace: (path: string) => void;
   onCreateWorkspace: (path: string) => void;
+  onBrowseWorkspace?: () => Promise<string | null>;
+  isLocalEnv?: boolean;
 }
 
 export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
@@ -16,6 +18,8 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
   activeWorkspace,
   onSelectWorkspace,
   onCreateWorkspace,
+  onBrowseWorkspace,
+  isLocalEnv = false,
 }) => {
   const [newPath, setNewPath] = useState('');
 
@@ -23,12 +27,8 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
 
   const handleBrowse = async () => {
     try {
-      if (window.electron) {
-        const path = await window.electron.selectWorkspace();
-        if (path) {
-          onCreateWorkspace(path);
-          onClose();
-        }
+      if (onBrowseWorkspace) {
+        await onBrowseWorkspace();
       }
     } catch {
       // User cancelled
@@ -41,7 +41,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
     
     // Normalize path format
     let path = newPath.trim();
-    if (!path.startsWith('/')) {
+    if (!isLocalEnv && !path.startsWith('/')) {
       path = '/Users/mock/' + path;
     }
     
@@ -49,8 +49,6 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
     setNewPath('');
     onClose();
   };
-
-  const isElectron = typeof window !== 'undefined' && !!window.electron;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -61,7 +59,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         </div>
         
         <div className="modal-body">
-          {isElectron && (
+          {onBrowseWorkspace && (
             <button
               type="button"
               className="btn btn-primary"
@@ -73,7 +71,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
           )}
 
           <div className="form-group">
-            <label>{isElectron ? 'Available Workspaces' : 'Available Mock Workspaces'}</label>
+            <label>{isLocalEnv ? 'Available Workspaces' : 'Available Mock Workspaces'}</label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.5rem' }}>
               {workspaces.map((path) => {
                 const name = path.split('/').pop() || path;
@@ -97,7 +95,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               })}
               {workspaces.length === 0 && (
                 <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.02)', borderRadius: '0.375rem', fontSize: '0.85rem' }}>
-                  No workspaces added yet. {isElectron ? 'Browse a folder to get started.' : ''}
+                  No workspaces added yet. {onBrowseWorkspace ? 'Browse a folder to get started.' : ''}
                 </div>
               )}
             </div>
@@ -107,21 +105,21 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
           
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="workspace-path">{isElectron ? 'Add Workspace Path' : 'Create New Virtual Workspace'}</label>
+              <label htmlFor="workspace-path">{isLocalEnv ? 'Add Workspace Path' : 'Create New Virtual Workspace'}</label>
               <div className="add-column-input-group" style={{ marginTop: '0.5rem' }}>
                 <input
                   id="workspace-path"
                   type="text"
                   className="input-field"
-                  placeholder={isElectron ? 'e.g. /absolute/path/to/project' : 'e.g. Project-Delta or /Users/mock/Custom-Path'}
+                  placeholder={isLocalEnv ? 'e.g. /absolute/path/to/project' : 'e.g. Project-Delta or /Users/mock/Custom-Path'}
                   value={newPath}
                   onChange={(e) => setNewPath(e.target.value)}
                   style={{ flex: 1 }}
                 />
-                <button type="submit" className="btn btn-primary">{isElectron ? 'Add' : 'Create'}</button>
+                <button type="submit" className="btn btn-primary">{isLocalEnv ? 'Add' : 'Create'}</button>
               </div>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {isElectron ? 'Specify absolute path on your filesystem.' : 'Prefixes automatically with `/Users/mock/` if absolute path is not specified.'}
+                {isLocalEnv ? 'Specify absolute path on your filesystem.' : 'Prefixes automatically with `/Users/mock/` if absolute path is not specified.'}
               </span>
             </div>
           </form>
