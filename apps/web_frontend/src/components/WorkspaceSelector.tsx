@@ -23,12 +23,14 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
 
   const handleBrowse = async () => {
     try {
-      const path = await (window as any).electron.selectWorkspace();
-      if (path) {
-        onCreateWorkspace(path);
-        onClose();
+      if (window.electron) {
+        const path = await window.electron.selectWorkspace();
+        if (path) {
+          onCreateWorkspace(path);
+          onClose();
+        }
       }
-    } catch (err) {
+    } catch {
       // User cancelled
     }
   };
@@ -48,7 +50,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
     onClose();
   };
 
-  const isElectron = typeof window !== 'undefined' && (window as any).electron;
+  const isElectron = typeof window !== 'undefined' && !!window.electron;
 
   return (
     <div className="modal-overlay" onClick={onClose}>

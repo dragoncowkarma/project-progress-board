@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { MockFileSystemAdapter, ElectronIPCAdapter } from 'shared';
 import type { KanbanBoardConfig, KanbanTask } from 'shared';
 
-const adapter = typeof window !== 'undefined' && (window as any).electron
+const adapter = typeof window !== 'undefined' && window.electron
   ? new ElectronIPCAdapter()
   : new MockFileSystemAdapter();
 const WORKSPACE_LIST_KEY = 'VITE_MOCK_STORAGE_KEY_WORKSPACES';
@@ -10,44 +10,60 @@ const WORKSPACE_LIST_KEY = 'VITE_MOCK_STORAGE_KEY_WORKSPACES';
 export type SaveStatus = 'saved' | 'saving' | 'error';
 
 export function useKanban() {
-  const [activeWorkspace, setActiveWorkspace] = useState<string>('');
-  const [boardConfig, setBoardConfig] = useState<KanbanBoardConfig | null>(null);
-  const [workspaces, setWorkspaces] = useState<string[]>([]);
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
-  const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  // Initialize workspaces list state
+  const [workspaces, setWorkspaces] = useState<string[]>(() => {
+    const isElectron = typeof window !== 'undefined' && !!window.electron;
+    const stored = localStorage.getItem(WORKSPACE_LIST_KEY);
+    if (stored) {
+      return JSON.parse(stored) as string[];
+    } else if (!isElectron) {
+      const list = [
+        '/Users/mock/Product-Roadmap',
+        '/Users/mock/Personal-Tasks',
+        '/Users/mock/Enterprise-Core-SDK'
+      ];
+      localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(list));
+      return list;
+    }
+    return [];
+  });
 
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isInitialLoad = useRef<boolean>(true);
-
-  // Initialize workspaces list and active workspace
-  useEffect(() => {
-    const isElectron = typeof window !== 'undefined' && (window as any).electron;
+  // Initialize active workspace state
+  const [activeWorkspace, setActiveWorkspace] = useState<string>(() => {
+    const isElectron = typeof window !== 'undefined' && !!window.electron;
     const stored = localStorage.getItem(WORKSPACE_LIST_KEY);
     let list: string[] = [];
     if (stored) {
-      list = JSON.parse(stored);
+      list = JSON.parse(stored) as string[];
     } else if (!isElectron) {
       list = [
         '/Users/mock/Product-Roadmap',
         '/Users/mock/Personal-Tasks',
         '/Users/mock/Enterprise-Core-SDK'
       ];
-      localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(list));
     }
-    setWorkspaces(list);
-
     const active = localStorage.getItem('current_active_mock_workspace') || (list.length > 0 ? list[0] : '');
     if (active) {
       localStorage.setItem('current_active_mock_workspace', active);
-      setActiveWorkspace(active);
-      loadWorkspace(active);
-    } else {
-      setSaveStatus('saved');
     }
+    return active;
+  });
+
+  const [boardConfig, setBoardConfig] = useState<KanbanBoardConfig | null>(null);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isInitialLoad = useRef<boolean>(true);
+
+  // Toast trigger helper
+  const showToast = useCallback((text: string, type: 'success' | 'error') => {
+    setToastMessage({ text, type });
   }, []);
 
   // Workspace loading logic
-  const loadWorkspace = async (path: string) => {
+  const loadWorkspace = useCallback(async (path: string) => {
+    await Promise.resolve();
     try {
       setSaveStatus('saving');
       localStorage.setItem('current_active_mock_workspace', path);
@@ -58,19 +74,28 @@ export function useKanban() {
       setSaveStatus('saved');
       showToast(`Loaded workspace: ${path.split('/').pop()}`, 'success');
       isInitialLoad.current = true;
-    } catch (err: any) {
+    } catch (err) {
       setSaveStatus('error');
-      showToast(`Failed to load workspace: ${err.message}`, 'error');
+      const errMsg = err instanceof Error ? err.message : String(err);
+      showToast(`Failed to load workspace: ${errMsg}`, 'error');
     }
-  };
+  }, [showToast]);
 
-  // Toast trigger helper
-  const showToast = (text: string, type: 'success' | 'error') => {
-    setToastMessage({ text, type });
-  };
+  // Initialize workspace on mount
+  useEffect(() => {
+    if (activeWorkspace) {
+      Promise.resolve().then(() => {
+        loadWorkspace(activeWorkspace);
+      });
+    } else {
+      Promise.resolve().then(() => {
+        setSaveStatus('saved');
+      });
+    }
+  }, [activeWorkspace, loadWorkspace]);
 
   // Auto-Save Trigger
-  const triggerAutoSave = (updatedConfig: KanbanBoardConfig) => {
+  const triggerAutoSave = useCallback((updatedConfig: KanbanBoardConfig) => {
     setSaveStatus('saving');
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
@@ -80,34 +105,35 @@ export function useKanban() {
       try {
         await adapter.writeBoardConfig(activeWorkspace, updatedConfig);
         setSaveStatus('saved');
-      } catch (err: any) {
+      } catch (err) {
         setSaveStatus('error');
-        showToast(`Save failed: ${err.message}`, 'error');
+        const errMsg = err instanceof Error ? err.message : String(err);
+        showToast(`Save failed: ${errMsg}`, 'error');
       }
     }, 1000);
-  };
+  }, [activeWorkspace, showToast]);
 
   // State update wrapper that queues autosave
-  const updateBoardConfigState = (newConfig: KanbanBoardConfig) => {
+  const updateBoardConfigState = useCallback((newConfig: KanbanBoardConfig) => {
     setBoardConfig(newConfig);
     triggerAutoSave(newConfig);
-  };
+  }, [triggerAutoSave]);
 
   // Workspace controls
-  const handleSelectWorkspace = (path: string) => {
+  const handleSelectWorkspace = useCallback((path: string) => {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
     loadWorkspace(path);
-  };
+  }, [loadWorkspace]);
 
-  const handleCreateWorkspace = async (path: string) => {
+  const handleCreateWorkspace = useCallback(async (path: string) => {
     if (!path || workspaces.includes(path)) return;
     const newList = [...workspaces, path];
     setWorkspaces(newList);
     localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(newList));
     loadWorkspace(path);
-  };
+  }, [workspaces, loadWorkspace]);
 
   // Column CRUD Operations
   const addColumn = (title: string) => {

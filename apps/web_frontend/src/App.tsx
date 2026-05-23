@@ -102,7 +102,7 @@ function App() {
         {/* Sidebar Panel */}
         <aside className="dashboard-sidebar">
           <div className="sidebar-section">
-            <span className="sidebar-title">{typeof window !== 'undefined' && (window as any).electron ? 'Local Workspaces' : 'Virtual Workspaces'}</span>
+            <span className="sidebar-title">{typeof window !== 'undefined' && window.electron ? 'Local Workspaces' : 'Virtual Workspaces'}</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
               {workspaces.map((path) => {
                 const name = path.split('/').pop() || path;
@@ -170,6 +170,7 @@ function App() {
       {/* Task Editor Properties Modal */}
       {selectedTask && (
         <TaskDetailsModal
+          key={selectedTask.id}
           isOpen={true}
           onClose={handleCloseTaskModal}
           task={selectedTask}

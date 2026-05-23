@@ -238,7 +238,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                       
                       {task.description && (
                         <p className="card-body">
-                          {task.description.replace(/[#*`\-]/g, '').trim()}
+                          {task.description.replace(/[#*`-]/g, '').trim()}
                         </p>
                       )}
 

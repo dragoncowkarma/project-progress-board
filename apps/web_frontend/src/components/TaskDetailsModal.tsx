@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { KanbanTask } from 'shared';
 
 interface TaskDetailsModalProps {
@@ -18,18 +18,10 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   onUpdateTask,
   onDeleteTask,
 }) => {
-  const [title, setTitle] = useState('');
-  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState(task ? task.title : '');
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>(task ? task.priority : 'medium');
+  const [description, setDescription] = useState(task ? task.description || '' : '');
   const [checklistText, setChecklistText] = useState('');
-
-  useEffect(() => {
-    if (task) {
-      setTitle(task.title);
-      setPriority(task.priority);
-      setDescription(task.description || '');
-    }
-  }, [task]);
 
   if (!isOpen || !task) return null;
 
