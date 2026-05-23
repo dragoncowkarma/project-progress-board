@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { KanbanTask } from 'shared';
+import { AGENT_PRESETS } from '../utils/AgentPresets';
 
 interface TaskDetailsModalProps {
   isOpen: boolean;
@@ -24,7 +25,13 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>(task ? task.priority : 'medium');
   const [description, setDescription] = useState(task ? task.description || '' : '');
   const [aiPrompt, setAiPrompt] = useState(task ? task.aiPrompt || '' : '');
-  const [verificationCommand, setVerificationCommand] = useState(task ? task.verificationCommand || '' : '');
+  const [agentCommandTemplate, setAgentCommandTemplate] = useState(task ? task.agentCommandTemplate || task.verificationCommand || AGENT_PRESETS[0].template : AGENT_PRESETS[0].template);
+  const [selectedAgentId, setSelectedAgentId] = useState(() => {
+    if (!task) return 'antigravity';
+    const temp = task.agentCommandTemplate || task.verificationCommand || '';
+    const match = AGENT_PRESETS.find(p => p.template === temp);
+    return match ? match.id : 'custom';
+  });
   const [checklistText, setChecklistText] = useState('');
 
   if (!isOpen || !task) return null;
@@ -241,17 +248,42 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
               </div>
 
               <div className="form-group" style={{ marginTop: '0.75rem' }}>
-                <label htmlFor="task-verification-command-input">🛠️ Verification / Test Command</label>
+                <label htmlFor="task-agent-preset-select">🤖 Select AI Agent CLI Preset</label>
+                <select
+                  id="task-agent-preset-select"
+                  className="input-field"
+                  value={selectedAgentId}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setSelectedAgentId(id);
+                    const preset = AGENT_PRESETS.find(p => p.id === id);
+                    if (preset) {
+                      setAgentCommandTemplate(preset.template);
+                      onUpdateTask(task.id, { agentCommandTemplate: preset.template });
+                    }
+                  }}
+                  style={{ background: 'var(--bg-app)' }}
+                >
+                  {AGENT_PRESETS.map(preset => (
+                    <option key={preset.id} value={preset.id}>{preset.name}</option>
+                  ))}
+                  <option value="custom">Custom Command</option>
+                </select>
+              </div>
+
+              <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                <label htmlFor="task-agent-command-template-input">🛠️ Agent Command Template (supports {"{{prompt}}"}, {"{{taskId}}"})</label>
                 <input
-                  id="task-verification-command-input"
+                  id="task-agent-command-template-input"
                   type="text"
                   className="input-field"
                   style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}
-                  placeholder="e.g. npm run test"
-                  value={verificationCommand}
+                  placeholder="e.g. claude '{{prompt}}'"
+                  value={agentCommandTemplate}
                   onChange={(e) => {
-                    setVerificationCommand(e.target.value);
-                    onUpdateTask(task.id, { verificationCommand: e.target.value });
+                    setAgentCommandTemplate(e.target.value);
+                    setSelectedAgentId('custom');
+                    onUpdateTask(task.id, { agentCommandTemplate: e.target.value });
                   }}
                 />
               </div>

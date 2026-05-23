@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { KanbanTask } from 'shared';
+import { AGENT_PRESETS } from '../utils/AgentPresets';
 
 interface AgentTerminalModalProps {
   isOpen: boolean;
@@ -18,7 +19,8 @@ export const AgentTerminalModal: React.FC<AgentTerminalModalProps> = ({
   onRunAgent,
   onMoveToDone,
 }) => {
-  const [command, setCommand] = useState('');
+  const [selectedAgentId, setSelectedAgentId] = useState('antigravity');
+  const [commandTemplate, setCommandTemplate] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [logs, setLogs] = useState<string>('');
   const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'failed'>('idle');
@@ -26,7 +28,16 @@ export const AgentTerminalModal: React.FC<AgentTerminalModalProps> = ({
 
   useEffect(() => {
     if (task) {
-      setCommand(task.verificationCommand || 'npm run test');
+      const template = task.agentCommandTemplate || task.verificationCommand || AGENT_PRESETS[0].template;
+      setCommandTemplate(template);
+      
+      const matchingPreset = AGENT_PRESETS.find(p => p.template === template);
+      if (matchingPreset) {
+        setSelectedAgentId(matchingPreset.id);
+      } else {
+        setSelectedAgentId('custom');
+      }
+      
       setLogs('');
       setStatus('idle');
     }
@@ -40,14 +51,24 @@ export const AgentTerminalModal: React.FC<AgentTerminalModalProps> = ({
 
   if (!isOpen || !task) return null;
 
+  const getSubstitutedCommand = () => {
+    if (!task) return '';
+    const sanitizedPrompt = (task.aiPrompt || '').replace(/"/g, '\\"');
+    return commandTemplate
+      .replace(/\{\{prompt\}\}/g, sanitizedPrompt)
+      .replace(/\{\{taskId\}\}/g, task.id);
+  };
+
   const handleRun = async () => {
     setIsRunning(true);
     setStatus('running');
-    setLogs(`[Terminal] Preparing to run AI agent for task: ${task.id}\n[Terminal] Workspace: ${workspacePath}\n[Terminal] Command: ${command}\n[Terminal] Prompt: "${task.aiPrompt || ''}"\n\n`);
+    
+    const substitutedCommand = getSubstitutedCommand();
+    
+    setLogs(`[Terminal] Preparing to direct prompt to AI Agent...\n[Terminal] Workspace: ${workspacePath}\n[Terminal] Substituted Command: ${substitutedCommand}\n\n`);
     
     try {
-      // Small simulated delay for local dev environments to feel realistic even if local command executes instantly
-      const runPromise = onRunAgent(task.id, task.aiPrompt || '', command);
+      const runPromise = onRunAgent(task.id, task.aiPrompt || '', substitutedCommand);
       const delayPromise = new Promise(resolve => setTimeout(resolve, 800));
       
       const [result] = await Promise.all([runPromise, delayPromise]);
@@ -86,34 +107,72 @@ export const AgentTerminalModal: React.FC<AgentTerminalModalProps> = ({
         </div>
 
         <div className="modal-body terminal-body">
-          <div className="terminal-controls-row">
-            <div className="form-group" style={{ flex: 1, margin: 0 }}>
-              <label htmlFor="terminal-command-input" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Verification / Test Command</label>
-              <input
-                id="terminal-command-input"
-                type="text"
-                className="input-field terminal-command-field"
-                value={command}
-                onChange={(e) => setCommand(e.target.value)}
-                disabled={isRunning}
-                placeholder="e.g. npm run test"
-                style={{ width: '100%', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}
-              />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div className="terminal-controls-row">
+              {/* Agent Preset Dropdown */}
+              <div className="form-group" style={{ width: '220px', margin: 0 }}>
+                <label htmlFor="terminal-agent-select" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Select AI Agent CLI</label>
+                <select
+                  id="terminal-agent-select"
+                  className="input-field terminal-command-field"
+                  value={selectedAgentId}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setSelectedAgentId(id);
+                    const preset = AGENT_PRESETS.find(p => p.id === id);
+                    if (preset) {
+                      setCommandTemplate(preset.template);
+                    }
+                  }}
+                  disabled={isRunning}
+                  style={{ width: '100%', height: '38px', fontSize: '0.85rem', background: 'var(--bg-app)' }}
+                >
+                  {AGENT_PRESETS.map(preset => (
+                    <option key={preset.id} value={preset.id}>{preset.name}</option>
+                  ))}
+                  <option value="custom">Custom Command</option>
+                </select>
+              </div>
+
+              {/* Command Template Input */}
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <label htmlFor="terminal-command-input" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Command Template (supports {"{{prompt}}"}, {"{{taskId}}"})</label>
+                <input
+                  id="terminal-command-input"
+                  type="text"
+                  className="input-field terminal-command-field"
+                  value={commandTemplate}
+                  onChange={(e) => {
+                    setCommandTemplate(e.target.value);
+                    setSelectedAgentId('custom');
+                  }}
+                  disabled={isRunning}
+                  placeholder="e.g. claude '{{prompt}}'"
+                  style={{ width: '100%', height: '38px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}
+                />
+              </div>
+
+              {/* Execute Button */}
+              <button
+                className={`btn btn-primary run-agent-action-btn ${isRunning ? 'running' : ''}`}
+                onClick={handleRun}
+                disabled={isRunning || !task.aiPrompt}
+                style={{ alignSelf: 'flex-end', height: '38px', padding: '0 1.25rem' }}
+              >
+                {isRunning ? (
+                  <>
+                    <span className="spinner-icon">⏳</span> Running...
+                  </>
+                ) : (
+                  <>⚡ Pass to Agent</>
+                )}
+              </button>
             </div>
-            <button
-              className={`btn btn-primary run-agent-action-btn ${isRunning ? 'running' : ''}`}
-              onClick={handleRun}
-              disabled={isRunning || !task.aiPrompt}
-              style={{ alignSelf: 'flex-end', height: '38px', padding: '0 1.25rem' }}
-            >
-              {isRunning ? (
-                <>
-                  <span className="spinner-icon">⏳</span> Running...
-                </>
-              ) : (
-                <>⚡ Execute Agent</>
-              )}
-            </button>
+
+            {/* Resolved Command Preview */}
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', background: 'rgba(0,0,0,0.2)', padding: '0.5rem 0.75rem', borderRadius: '0.25rem', border: '1px dashed var(--border-color)', wordBreak: 'break-all' }}>
+              <span style={{ color: '#10b981', fontWeight: 600 }}>Resolved Command:</span> {getSubstitutedCommand() || '(empty)'}
+            </div>
           </div>
 
           {!task.aiPrompt && (
@@ -128,7 +187,7 @@ export const AgentTerminalModal: React.FC<AgentTerminalModalProps> = ({
                 <pre className="terminal-logs">{logs}</pre>
               ) : (
                 <div className="terminal-placeholder">
-                  &gt;_ Console idle. Click "Execute Agent" to run the AI prompt instructions.
+                  &gt;_ Console idle. Click "Pass to Agent" to stream the prompt to the selected AI CLI.
                 </div>
               )}
               <div ref={consoleEndRef} />

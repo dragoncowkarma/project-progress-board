@@ -28,6 +28,7 @@ export interface KanbanTask {
   assignedAgent?: string;
   aiPrompt?: string;
   verificationCommand?: string;
+  agentCommandTemplate?: string;
   checklists: Array<{
     id: string;
     text: string;

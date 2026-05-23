@@ -50,7 +50,7 @@
       "description": "Double-click this card to edit its properties, customize the command, and test the Run Agent button. You can also run the agent directly from the card using the '⚡ Run' button.",
       "priority": "medium",
       "aiPrompt": "You are a test agent. Verify that you can parse this prompt successfully and that the runner executes the verification command without errors.",
-      "verificationCommand": "echo 'Agent prompt execution test passed successfully!'",
+      "agentCommandTemplate": "echo \"AI Prompt matches: {{prompt}}\"",
       "checklists": []
     },
     "FEEDBACK-1": {

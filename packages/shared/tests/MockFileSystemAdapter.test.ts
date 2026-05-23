@@ -87,6 +87,7 @@ test('writeBoardConfig - should serialize and write board config to localStorage
         priority: 'medium',
         aiPrompt: 'Translate this code',
         verificationCommand: 'npm run test-unit',
+        agentCommandTemplate: 'claude "{{prompt}}"',
         checklists: []
       }
     },
@@ -99,6 +100,7 @@ test('writeBoardConfig - should serialize and write board config to localStorage
   assert.strictEqual(loaded.columns[0].title, 'To Do');
   assert.strictEqual(loaded.tasks['t1'].aiPrompt, 'Translate this code');
   assert.strictEqual(loaded.tasks['t1'].verificationCommand, 'npm run test-unit');
+  assert.strictEqual(loaded.tasks['t1'].agentCommandTemplate, 'claude "{{prompt}}"');
 });
 
 test('readTextFile - should throw error if file does not exist', async () => {
