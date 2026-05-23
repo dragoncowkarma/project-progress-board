@@ -3,6 +3,7 @@ import { useKanban } from './hooks/useKanban';
 import { KanbanBoard } from './components/KanbanBoard';
 import { WorkspaceSelector } from './components/WorkspaceSelector';
 import { TaskDetailsModal } from './components/TaskDetailsModal';
+import { AgentTerminalModal } from './components/AgentTerminalModal';
 import { NotificationToast } from './components/NotificationToast';
 import type { KanbanTask } from 'shared';
 
@@ -26,10 +27,12 @@ function App() {
     moveColumn,
     browseWorkspace,
     envName,
+    runAgent,
   } = useKanban();
 
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<KanbanTask | null>(null);
+  const [terminalTask, setTerminalTask] = useState<KanbanTask | null>(null);
   const [selectedTaskColId, setSelectedTaskColId] = useState<string>('');
 
   const handleCardClick = (task: KanbanTask, columnId: string) => {
@@ -40,6 +43,17 @@ function App() {
   const handleCloseTaskModal = () => {
     setSelectedTask(null);
     setSelectedTaskColId('');
+  };
+
+  const handleMoveToDone = (taskId: string) => {
+    if (!boardConfig) return;
+    const doneCol = boardConfig.columns.find(c => c.title.toLowerCase() === 'done') || boardConfig.columns[boardConfig.columns.length - 1];
+    if (!doneCol) return;
+    
+    const sourceCol = boardConfig.columns.find(c => c.taskIds.includes(taskId));
+    if (!sourceCol || sourceCol.id === doneCol.id) return;
+    
+    moveTask(taskId, sourceCol.id, doneCol.id, doneCol.taskIds.length);
   };
 
   const activeWorkspaceName = activeWorkspace.split('/').pop() || activeWorkspace;
@@ -152,6 +166,7 @@ function App() {
               onMoveTask={moveTask}
               onMoveColumn={moveColumn}
               onCardClick={handleCardClick}
+              onRunAgentClick={(task) => setTerminalTask(task)}
             />
           ) : (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', gap: '1rem' }}>
@@ -188,8 +203,21 @@ function App() {
           columnId={selectedTaskColId}
           onUpdateTask={updateTask}
           onDeleteTask={deleteTask}
+          onRunAgentClick={(task) => {
+            handleCloseTaskModal();
+            setTerminalTask(task);
+          }}
         />
       )}
+
+      <AgentTerminalModal
+        isOpen={!!terminalTask}
+        onClose={() => setTerminalTask(null)}
+        task={terminalTask}
+        workspacePath={activeWorkspace}
+        onRunAgent={runAgent}
+        onMoveToDone={handleMoveToDone}
+      />
 
       {/* Global alert toast */}
       <NotificationToast

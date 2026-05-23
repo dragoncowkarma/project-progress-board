@@ -27,6 +27,7 @@ export interface KanbanTask {
   priority: 'low' | 'medium' | 'high';
   assignedAgent?: string;
   aiPrompt?: string;
+  verificationCommand?: string;
   checklists: Array<{
     id: string;
     text: string;

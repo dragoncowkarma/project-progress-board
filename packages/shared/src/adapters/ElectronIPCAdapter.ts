@@ -11,6 +11,7 @@ declare global {
       listFiles(workspacePath: string): Promise<FileInfo[]>;
       readTextFile(filePath: string): Promise<string>;
       writeTextFile(filePath: string, content: string): Promise<void>;
+      runAgent(workspacePath: string, taskId: string, prompt: string, command: string): Promise<{ success: boolean; output: string; error?: string }>;
     };
   }
 }
@@ -46,5 +47,9 @@ export class ElectronIPCAdapter implements IFileSystemAdapter {
 
   public async writeTextFile(filePath: string, content: string): Promise<void> {
     await window.electron.writeTextFile(filePath, content);
+  }
+
+  public async runAgent(workspacePath: string, taskId: string, prompt: string, command: string): Promise<{ success: boolean; output: string; error?: string }> {
+    return await window.electron.runAgent(workspacePath, taskId, prompt, command);
   }
 }

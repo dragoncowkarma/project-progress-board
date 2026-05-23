@@ -8,4 +8,5 @@ export interface IFileSystemAdapter {
   listFiles(workspacePath: string): Promise<FileInfo[]>;
   readTextFile(filePath: string): Promise<string>;
   writeTextFile(filePath: string, content: string): Promise<void>;
+  runAgent(workspacePath: string, taskId: string, prompt: string, command: string): Promise<{ success: boolean; output: string; error?: string }>;
 }

@@ -86,6 +86,7 @@ test('writeBoardConfig - should serialize and write board config to localStorage
         description: 'Desc',
         priority: 'medium',
         aiPrompt: 'Translate this code',
+        verificationCommand: 'npm run test-unit',
         checklists: []
       }
     },
@@ -97,6 +98,7 @@ test('writeBoardConfig - should serialize and write board config to localStorage
   assert.strictEqual(loaded.boardName, 'Custom Board');
   assert.strictEqual(loaded.columns[0].title, 'To Do');
   assert.strictEqual(loaded.tasks['t1'].aiPrompt, 'Translate this code');
+  assert.strictEqual(loaded.tasks['t1'].verificationCommand, 'npm run test-unit');
 });
 
 test('readTextFile - should throw error if file does not exist', async () => {
@@ -136,4 +138,13 @@ test('listFiles - should list all files under the workspace path', async () => {
   assert.strictEqual(notesFile.path, '/Users/mock/my-board/notes.md');
   assert.strictEqual(notesFile.type, 'file');
   assert.ok(notesFile.sizeBytes > 0);
+});
+
+test('runAgent - should simulate execution and return success with logs', async () => {
+  const adapter = new MockFileSystemAdapter();
+  const res = await adapter.runAgent('/Users/mock/my-board', 'TSK-1', 'Do something', 'npm run test');
+  assert.strictEqual(res.success, true);
+  assert.ok(res.output.includes('[Harness: TSK-1] Starting adversarial TDD verification...'));
+  assert.ok(res.output.includes('[Agent: antigravity] Analyzing prompt instructions: "Do something..."'));
+  assert.ok(res.output.includes('Status: SUCCESS'));
 });

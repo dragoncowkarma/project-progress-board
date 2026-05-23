@@ -68,6 +68,27 @@ export class MockFileSystemAdapter implements IFileSystemAdapter {
     this.saveDB(db);
   }
 
+  public async runAgent(workspacePath: string, taskId: string, prompt: string, command: string): Promise<{ success: boolean; output: string; error?: string }> {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const output = [
+      `[Harness: ${taskId}] Starting adversarial TDD verification...`,
+      `[Harness: ${taskId}] Executing command: ${command || 'npm run test'}`,
+      `[Agent: antigravity] Analyzing prompt instructions: "${prompt.slice(0, 40)}..."`,
+      `[Agent: antigravity] RED phase: Tests compiled & verified failing state.`,
+      `[Agent: antigravity] GREEN phase: Code changes written surgically.`,
+      `[Agent: antigravity] DOC phase: Updated map.md & generated system architecture fragments.`,
+      `[Harness: ${taskId}] Execution complete. All mechanical invariants verified.`,
+      `[Harness: ${taskId}] Coverage: 100% line coverage.`,
+      `[Harness: ${taskId}] Status: SUCCESS (Exit Code: 0)`
+    ].join('\n');
+
+    return {
+      success: true,
+      output
+    };
+  }
+
   private createDefaultConfig(): KanbanBoardConfig {
     return {
       version: '1.0.0',

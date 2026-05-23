@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld('electron', {
   listFiles: (path: string) => ipcRenderer.invoke('fs:list-files', path),
   readTextFile: (path: string) => ipcRenderer.invoke('fs:read-file', path),
   writeTextFile: (path: string, content: string) => ipcRenderer.invoke('fs:write-file', path, content),
+  runAgent: (workspacePath: string, taskId: string, prompt: string, command: string) => ipcRenderer.invoke('agent:run', workspacePath, taskId, prompt, command),
 });

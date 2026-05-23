@@ -132,3 +132,28 @@ ipcMain.handle('fs:write-file', async (_, filePath: string, content: string) => 
   await fs.mkdir(dir, { recursive: true });
   await fs.writeFile(filePath, content, 'utf-8');
 });
+
+ipcMain.handle('agent:run', async (_, workspacePath: string, _taskId: string, _prompt: string, command: string) => {
+  const { exec } = require('child_process');
+  const execCmd = command || `npm run test`;
+  
+  const resolvedWorkspace = path.resolve(workspacePath);
+  try {
+    const stats = await fs.stat(resolvedWorkspace);
+    if (!stats.isDirectory()) {
+      return { success: false, output: 'Error: Invalid workspace directory path.' };
+    }
+  } catch {
+    return { success: false, output: 'Error: Workspace directory does not exist.' };
+  }
+
+  return new Promise((resolve) => {
+    exec(execCmd, { cwd: resolvedWorkspace, timeout: 30000 }, (err: any, stdout: string, stderr: string) => {
+      resolve({
+        success: !err,
+        output: stdout + (stderr ? '\n' + stderr : ''),
+        error: err ? err.message : undefined
+      });
+    });
+  });
+});

@@ -190,6 +190,34 @@ function devFilesystemBridgePlugin() {
                 break;
               }
 
+              case 'run-agent': {
+                const { workspacePath, command } = payload;
+                const execCmd = command || `npm run test`;
+                const resolvedWorkspace = path.resolve(workspacePath);
+                try {
+                  const stats = await fs.stat(resolvedWorkspace);
+                  if (!stats.isDirectory()) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Invalid workspace directory path' }));
+                    return;
+                  }
+                } catch {
+                  res.writeHead(400, { 'Content-Type': 'application/json' });
+                  res.end(JSON.stringify({ error: 'Workspace directory does not exist' }));
+                  return;
+                }
+
+                exec(execCmd, { cwd: resolvedWorkspace, timeout: 30000 }, (err, stdout, stderr) => {
+                  res.writeHead(200, { 'Content-Type': 'application/json' });
+                  res.end(JSON.stringify({
+                    success: !err,
+                    output: stdout + (stderr ? '\n' + stderr : ''),
+                    error: err ? err.message : undefined
+                  }));
+                });
+                break;
+              }
+
               default: {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: `Unknown action: ${action}` }));

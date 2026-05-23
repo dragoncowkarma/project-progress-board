@@ -366,6 +366,10 @@ export function useKanban() {
     }
   }, [handleCreateWorkspace]);
 
+  const runAgent = useCallback(async (taskId: string, prompt: string, command: string) => {
+    return await adapter.runAgent(activeWorkspace, taskId, prompt, command);
+  }, [activeWorkspace]);
+
   const envName = isElectron
     ? 'desktop'
     : isDevLocal
@@ -390,6 +394,7 @@ export function useKanban() {
     moveTask,
     moveColumn,
     browseWorkspace,
-    envName
+    envName,
+    runAgent
   };
 }

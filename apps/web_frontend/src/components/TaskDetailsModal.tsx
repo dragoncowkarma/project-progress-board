@@ -8,6 +8,7 @@ interface TaskDetailsModalProps {
   columnId: string;
   onUpdateTask: (taskId: string, updatedFields: Partial<KanbanTask>) => void;
   onDeleteTask: (columnId: string, taskId: string) => void;
+  onRunAgentClick?: (task: KanbanTask) => void;
 }
 
 export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
@@ -17,11 +18,13 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   columnId,
   onUpdateTask,
   onDeleteTask,
+  onRunAgentClick,
 }) => {
   const [title, setTitle] = useState(task ? task.title : '');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>(task ? task.priority : 'medium');
   const [description, setDescription] = useState(task ? task.description || '' : '');
   const [aiPrompt, setAiPrompt] = useState(task ? task.aiPrompt || '' : '');
+  const [verificationCommand, setVerificationCommand] = useState(task ? task.verificationCommand || '' : '');
   const [checklistText, setChecklistText] = useState('');
 
   if (!isOpen || !task) return null;
@@ -175,30 +178,54 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
               <div className="form-group" style={{ marginTop: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
                   <label htmlFor="task-ai-prompt-textarea" style={{ margin: 0 }}>🤖 AI System Prompt</label>
-                  {aiPrompt && (
-                    <button
-                      type="button"
-                      className="btn-copy-prompt-inline"
-                      onClick={() => {
-                        navigator.clipboard.writeText(aiPrompt);
-                      }}
-                      style={{
-                        fontSize: '0.75rem',
-                        color: '#c084fc',
-                        background: 'rgba(168, 85, 247, 0.1)',
-                        border: '1px solid rgba(168, 85, 247, 0.25)',
-                        borderRadius: '0.25rem',
-                        padding: '0.2rem 0.5rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      📋 Copy Prompt
-                    </button>
-                  )}
+                  <div style={{ display: 'flex', gap: '0.35rem' }}>
+                    {aiPrompt && (
+                      <button
+                        type="button"
+                        className="btn-copy-prompt-inline"
+                        onClick={() => {
+                          navigator.clipboard.writeText(aiPrompt);
+                        }}
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#c084fc',
+                          background: 'rgba(168, 85, 247, 0.1)',
+                          border: '1px solid rgba(168, 85, 247, 0.25)',
+                          borderRadius: '0.25rem',
+                          padding: '0.2rem 0.5rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        📋 Copy Prompt
+                      </button>
+                    )}
+                    {aiPrompt && onRunAgentClick && (
+                      <button
+                        type="button"
+                        className="btn-run-agent-inline"
+                        onClick={() => onRunAgentClick(task)}
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#10b981',
+                          background: 'rgba(16, 185, 129, 0.1)',
+                          border: '1px solid rgba(16, 185, 129, 0.25)',
+                          borderRadius: '0.25rem',
+                          padding: '0.2rem 0.5rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        ⚡ Run Agent
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <textarea
                   id="task-ai-prompt-textarea"
@@ -209,6 +236,22 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                   onChange={(e) => {
                     setAiPrompt(e.target.value);
                     onUpdateTask(task.id, { aiPrompt: e.target.value });
+                  }}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                <label htmlFor="task-verification-command-input">🛠️ Verification / Test Command</label>
+                <input
+                  id="task-verification-command-input"
+                  type="text"
+                  className="input-field"
+                  style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}
+                  placeholder="e.g. npm run test"
+                  value={verificationCommand}
+                  onChange={(e) => {
+                    setVerificationCommand(e.target.value);
+                    onUpdateTask(task.id, { verificationCommand: e.target.value });
                   }}
                 />
               </div>

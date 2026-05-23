@@ -10,6 +10,7 @@ interface KanbanBoardProps {
   onMoveTask: (taskId: string, sourceColId: string, targetColId: string, targetIndex: number) => void;
   onMoveColumn: (columnId: string, targetIndex: number) => void;
   onCardClick: (task: KanbanTask, columnId: string) => void;
+  onRunAgentClick?: (task: KanbanTask) => void;
 }
 
 export const KanbanBoard: React.FC<KanbanBoardProps> = ({
@@ -21,6 +22,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   onMoveTask,
   onMoveColumn,
   onCardClick,
+  onRunAgentClick,
 }) => {
   const [newCardTitle, setNewCardTitle] = useState<{ [colId: string]: string }>({});
   const [isAddingCard, setIsAddingCard] = useState<{ [colId: string]: boolean }>({});
@@ -292,6 +294,18 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                               {copiedTaskId === task.id ? 'Copied!' : 'Copy Prompt'}
                             </span>
                           </button>
+
+                          {onRunAgentClick && (
+                            <button
+                              className="card-prompt-btn card-run-btn"
+                              onClick={() => onRunAgentClick(task)}
+                              title="Run prompt directly on AI agent"
+                              style={{ marginLeft: '0.35rem', background: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981' }}
+                            >
+                              <span className="prompt-icon">⚡</span>
+                              <span className="prompt-text">Run</span>
+                            </button>
+                          )}
                         </div>
                       )}
 
