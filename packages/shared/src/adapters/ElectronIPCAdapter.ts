@@ -9,8 +9,8 @@ declare global {
       readBoardConfig(workspacePath: string): Promise<KanbanBoardConfig>;
       writeBoardConfig(workspacePath: string, config: KanbanBoardConfig): Promise<void>;
       listFiles(workspacePath: string): Promise<FileInfo[]>;
-      readTextFile(filePath: string): Promise<string>;
-      writeTextFile(filePath: string, content: string): Promise<void>;
+      readTextFile(workspacePath: string, filePath: string): Promise<string>;
+      writeTextFile(workspacePath: string, filePath: string, content: string): Promise<void>;
       runAgent(workspacePath: string, taskId: string, prompt: string, command: string): Promise<{ success: boolean; output: string; error?: string }>;
     };
   }
@@ -41,12 +41,12 @@ export class ElectronIPCAdapter implements IFileSystemAdapter {
     return await window.electron.listFiles(workspacePath);
   }
 
-  public async readTextFile(filePath: string): Promise<string> {
-    return await window.electron.readTextFile(filePath);
+  public async readTextFile(workspacePath: string, filePath: string): Promise<string> {
+    return await window.electron.readTextFile(workspacePath, filePath);
   }
 
-  public async writeTextFile(filePath: string, content: string): Promise<void> {
-    await window.electron.writeTextFile(filePath, content);
+  public async writeTextFile(workspacePath: string, filePath: string, content: string): Promise<void> {
+    await window.electron.writeTextFile(workspacePath, filePath, content);
   }
 
   public async runAgent(workspacePath: string, taskId: string, prompt: string, command: string): Promise<{ success: boolean; output: string; error?: string }> {

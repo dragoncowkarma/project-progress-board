@@ -1,0 +1,24 @@
+{
+  "id": "FEEDBACK-1",
+  "status": "Verified",
+  "description": "Implement path traversal protection in Electron IPC handlers.",
+  "agent": "Gemini CLI",
+  "depends_on": [],
+  "mechanical_dod": {
+    "command": "grep -q 'validateWorkspacePath' apps/desktop_shell/src/main.ts",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 6,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "e52c4412290d85f9859ec7fdb9c2020d4fd3e8722cb872d0beb63baddf0190bf",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Starting security hardening.",
+  "verification_mode": "standard"
+}

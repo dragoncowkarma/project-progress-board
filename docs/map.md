@@ -8,3 +8,4 @@
 | `IFileSystemAdapter` | `packages/shared/src/interfaces/index.ts` | Interface | FileSystem adapter interface contract. |
 | `MockFileSystemAdapter` | `packages/shared/src/adapters/MockFileSystemAdapter.ts` | Class | LocalStorage-based simulated filesystem adapter. |
 | `ElectronIPCAdapter` | `packages/shared/src/adapters/ElectronIPCAdapter.ts` | Class | Electron ContextBridge-based filesystem adapter. |
+| `validateWorkspacePath` | `apps/desktop_shell/src/main.ts` | Function | Path traversal protection utility for IPC handlers. |

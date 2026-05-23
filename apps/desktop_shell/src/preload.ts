@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld('electron', {
   readBoardConfig: (path: string) => ipcRenderer.invoke('fs:read-config', path),
   writeBoardConfig: (path: string, config: any) => ipcRenderer.invoke('fs:write-config', path, config),
   listFiles: (path: string) => ipcRenderer.invoke('fs:list-files', path),
-  readTextFile: (path: string) => ipcRenderer.invoke('fs:read-file', path),
-  writeTextFile: (path: string, content: string) => ipcRenderer.invoke('fs:write-file', path, content),
+  readTextFile: (workspacePath: string, filePath: string) => ipcRenderer.invoke('fs:read-file', workspacePath, filePath),
+  writeTextFile: (workspacePath: string, filePath: string, content: string) => ipcRenderer.invoke('fs:write-file', workspacePath, filePath, content),
   runAgent: (workspacePath: string, taskId: string, prompt: string, command: string) => ipcRenderer.invoke('agent:run', workspacePath, taskId, prompt, command),
 });

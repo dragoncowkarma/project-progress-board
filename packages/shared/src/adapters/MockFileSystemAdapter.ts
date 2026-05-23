@@ -56,13 +56,21 @@ export class MockFileSystemAdapter implements IFileSystemAdapter {
       });
   }
 
-  public async readTextFile(filePath: string): Promise<string> {
+  public async readTextFile(workspacePath: string, filePath: string): Promise<string> {
     const db = this.getDB();
+    // In mock adapter, we can still use filePath if it's absolute in the mock sense, 
+    // or validate it's within workspacePath for consistency.
+    if (!filePath.startsWith(workspacePath)) {
+       throw new Error(`Security Error (Mock): Path ${filePath} is outside workspace ${workspacePath}`);
+    }
     if (!db[filePath]) throw new Error(`File not found: ${filePath}`);
     return db[filePath];
   }
 
-  public async writeTextFile(filePath: string, content: string): Promise<void> {
+  public async writeTextFile(workspacePath: string, filePath: string, content: string): Promise<void> {
+    if (!filePath.startsWith(workspacePath)) {
+       throw new Error(`Security Error (Mock): Path ${filePath} is outside workspace ${workspacePath}`);
+    }
     const db = this.getDB();
     db[filePath] = content;
     this.saveDB(db);

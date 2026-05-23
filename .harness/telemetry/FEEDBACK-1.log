@@ -1,0 +1,192 @@
+
+> shared@1.0.0 test
+> c8 npx tsx --test tests/**/*.test.ts
+
+TAP version 13
+# Subtest: selectWorkspace - should call fetch with select-workspace action and return path
+ok 1 - selectWorkspace - should call fetch with select-workspace action and return path
+  ---
+  duration_ms: 2.717542
+  type: 'test'
+  ...
+# Subtest: selectWorkspace - should throw error if selectWorkspace fails
+ok 2 - selectWorkspace - should throw error if selectWorkspace fails
+  ---
+  duration_ms: 1.101727
+  type: 'test'
+  ...
+# Subtest: selectWorkspace - should throw generic error if fetch is not ok
+ok 3 - selectWorkspace - should throw generic error if fetch is not ok
+  ---
+  duration_ms: 0.515684
+  type: 'test'
+  ...
+# Subtest: hasBoardConfig - should return exists value
+ok 4 - hasBoardConfig - should return exists value
+  ---
+  duration_ms: 0.563397
+  type: 'test'
+  ...
+# Subtest: readBoardConfig - should return config object
+ok 5 - readBoardConfig - should return config object
+  ---
+  duration_ms: 0.460682
+  type: 'test'
+  ...
+# Subtest: writeBoardConfig - should post config object
+ok 6 - writeBoardConfig - should post config object
+  ---
+  duration_ms: 1.725695
+  type: 'test'
+  ...
+# Subtest: listFiles - should return files list
+ok 7 - listFiles - should return files list
+  ---
+  duration_ms: 1.146689
+  type: 'test'
+  ...
+# Subtest: readTextFile - should return content
+ok 8 - readTextFile - should return content
+  ---
+  duration_ms: 0.591027
+  type: 'test'
+  ...
+# Subtest: writeTextFile - should post content
+ok 9 - writeTextFile - should post content
+  ---
+  duration_ms: 0.700233
+  type: 'test'
+  ...
+# Subtest: selectWorkspace - returns workspace path
+ok 10 - selectWorkspace - returns workspace path
+  ---
+  duration_ms: 1.994555
+  type: 'test'
+  ...
+# Subtest: selectWorkspace - throws error when cancelled
+ok 11 - selectWorkspace - throws error when cancelled
+  ---
+  duration_ms: 0.960502
+  type: 'test'
+  ...
+# Subtest: hasBoardConfig - returns boolean from bridge
+ok 12 - hasBoardConfig - returns boolean from bridge
+  ---
+  duration_ms: 0.314079
+  type: 'test'
+  ...
+# Subtest: readBoardConfig - returns board config
+ok 13 - readBoardConfig - returns board config
+  ---
+  duration_ms: 0.295987
+  type: 'test'
+  ...
+# Subtest: writeBoardConfig - calls bridge method
+ok 14 - writeBoardConfig - calls bridge method
+  ---
+  duration_ms: 0.741232
+  type: 'test'
+  ...
+# Subtest: listFiles - returns files list from bridge
+ok 15 - listFiles - returns files list from bridge
+  ---
+  duration_ms: 0.327265
+  type: 'test'
+  ...
+# Subtest: readTextFile - returns content
+ok 16 - readTextFile - returns content
+  ---
+  duration_ms: 0.279216
+  type: 'test'
+  ...
+# Subtest: writeTextFile - calls bridge method
+ok 17 - writeTextFile - calls bridge method
+  ---
+  duration_ms: 0.423465
+  type: 'test'
+  ...
+# Subtest: selectWorkspace - should return default workspace path
+ok 18 - selectWorkspace - should return default workspace path
+  ---
+  duration_ms: 2.093755
+  type: 'test'
+  ...
+# Subtest: selectWorkspace - should return active workspace if set
+ok 19 - selectWorkspace - should return active workspace if set
+  ---
+  duration_ms: 0.832653
+  type: 'test'
+  ...
+# Subtest: hasBoardConfig - should return false if board.json is not present
+ok 20 - hasBoardConfig - should return false if board.json is not present
+  ---
+  duration_ms: 0.50836
+  type: 'test'
+  ...
+# Subtest: hasBoardConfig - should return true if board.json is present
+ok 21 - hasBoardConfig - should return true if board.json is present
+  ---
+  duration_ms: 2.413676
+  type: 'test'
+  ...
+# Subtest: readBoardConfig - should initialize and return default board config if not exists
+ok 22 - readBoardConfig - should initialize and return default board config if not exists
+  ---
+  duration_ms: 1.028088
+  type: 'test'
+  ...
+# Subtest: writeBoardConfig - should serialize and write board config to localStorage
+ok 23 - writeBoardConfig - should serialize and write board config to localStorage
+  ---
+  duration_ms: 0.574391
+  type: 'test'
+  ...
+# Subtest: readTextFile - should throw error if file does not exist
+ok 24 - readTextFile - should throw error if file does not exist
+  ---
+  duration_ms: 2.351028
+  type: 'test'
+  ...
+# Subtest: readTextFile - should throw error if path is outside workspace
+ok 25 - readTextFile - should throw error if path is outside workspace
+  ---
+  duration_ms: 1.390411
+  type: 'test'
+  ...
+# Subtest: writeTextFile and readTextFile - should write and read text content
+ok 26 - writeTextFile and readTextFile - should write and read text content
+  ---
+  duration_ms: 0.709549
+  type: 'test'
+  ...
+# Subtest: listFiles - should list all files under the workspace path
+ok 27 - listFiles - should list all files under the workspace path
+  ---
+  duration_ms: 1.525818
+  type: 'test'
+  ...
+# Subtest: runAgent - should simulate execution and return success with logs
+ok 28 - runAgent - should simulate execution and return success with logs
+  ---
+  duration_ms: 1501.518223
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3210.521283
+--------------------------|---------|----------|---------|---------|-------------------
+File                      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+--------------------------|---------|----------|---------|---------|-------------------
+All files                 |   97.53 |    94.23 |   94.44 |   97.53 |                   
+ DevFileSystemAdapter.ts  |   96.82 |    93.75 |   91.66 |   96.82 | 61-62             
+ ElectronIPCAdapter.ts    |   96.36 |      100 |      90 |   96.36 | 53-54             
+ MockFileSystemAdapter.ts |    98.4 |     92.3 |     100 |    98.4 | 72-73             
+--------------------------|---------|----------|---------|---------|-------------------
+
+[salt:FEEDBACK-1:1779557443.N]

@@ -132,11 +132,12 @@ test('readTextFile - should return content', async () => {
   const adapter = new DevFileSystemAdapter();
   mockFetchResponse = { content: 'my text' };
   
-  const content = await adapter.readTextFile('/Users/test/dev-workspace/notes.md');
+  const content = await adapter.readTextFile('/Users/test/dev-workspace', '/Users/test/dev-workspace/notes.md');
   assert.strictEqual(content, 'my text');
   
   const body = JSON.parse(mockFetchCalls[0].options.body);
   assert.strictEqual(body.action, 'read-file');
+  assert.strictEqual(body.workspacePath, '/Users/test/dev-workspace');
   assert.strictEqual(body.filePath, '/Users/test/dev-workspace/notes.md');
 });
 
@@ -144,10 +145,11 @@ test('writeTextFile - should post content', async () => {
   const adapter = new DevFileSystemAdapter();
   mockFetchResponse = { success: true };
   
-  await adapter.writeTextFile('/Users/test/dev-workspace/notes.md', 'hello');
+  await adapter.writeTextFile('/Users/test/dev-workspace', '/Users/test/dev-workspace/notes.md', 'hello');
   
   const body = JSON.parse(mockFetchCalls[0].options.body);
   assert.strictEqual(body.action, 'write-file');
+  assert.strictEqual(body.workspacePath, '/Users/test/dev-workspace');
   assert.strictEqual(body.filePath, '/Users/test/dev-workspace/notes.md');
   assert.strictEqual(body.content, 'hello');
 });

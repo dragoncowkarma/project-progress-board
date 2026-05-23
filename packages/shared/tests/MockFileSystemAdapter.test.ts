@@ -106,17 +106,26 @@ test('writeBoardConfig - should serialize and write board config to localStorage
 test('readTextFile - should throw error if file does not exist', async () => {
   const adapter = new MockFileSystemAdapter();
   await assert.rejects(
-    async () => { await adapter.readTextFile('/Users/mock/non-existent.txt'); },
+    async () => { await adapter.readTextFile('/Users/mock', '/Users/mock/non-existent.txt'); },
     /File not found/
+  );
+});
+
+test('readTextFile - should throw error if path is outside workspace', async () => {
+  const adapter = new MockFileSystemAdapter();
+  await assert.rejects(
+    async () => { await adapter.readTextFile('/Users/mock/my-board', '/Users/mock/outside.txt'); },
+    /Security Error/
   );
 });
 
 test('writeTextFile and readTextFile - should write and read text content', async () => {
   const adapter = new MockFileSystemAdapter();
+  const workspace = '/Users/mock/my-board';
   const filePath = '/Users/mock/my-board/docs/notes.md';
   const content = '# Project Notes\nHello World';
-  await adapter.writeTextFile(filePath, content);
-  const readContent = await adapter.readTextFile(filePath);
+  await adapter.writeTextFile(workspace, filePath, content);
+  const readContent = await adapter.readTextFile(workspace, filePath);
   assert.strictEqual(readContent, content);
 });
 
@@ -124,9 +133,9 @@ test('listFiles - should list all files under the workspace path', async () => {
   const adapter = new MockFileSystemAdapter();
   const workspace = '/Users/mock/my-board';
   
-  await adapter.writeTextFile('/Users/mock/my-board/notes.md', 'some notes');
-  await adapter.writeTextFile('/Users/mock/my-board/docs/todo.txt', 'do something');
-  await adapter.writeTextFile('/Users/mock/another-board/notes.md', 'other notes'); // should not list this
+  await adapter.writeTextFile(workspace, '/Users/mock/my-board/notes.md', 'some notes');
+  await adapter.writeTextFile(workspace, '/Users/mock/my-board/docs/todo.txt', 'do something');
+  await adapter.writeTextFile('/Users/mock/another-board', '/Users/mock/another-board/notes.md', 'other notes'); // should not list this
   
   const files = await adapter.listFiles(workspace);
   

@@ -48,13 +48,13 @@ export class DevFileSystemAdapter implements IFileSystemAdapter {
     return result.files;
   }
 
-  public async readTextFile(filePath: string): Promise<string> {
-    const result = await this.request('read-file', { filePath });
+  public async readTextFile(workspacePath: string, filePath: string): Promise<string> {
+    const result = await this.request('read-file', { workspacePath, filePath });
     return result.content;
   }
 
-  public async writeTextFile(filePath: string, content: string): Promise<void> {
-    await this.request('write-file', { filePath, content });
+  public async writeTextFile(workspacePath: string, filePath: string, content: string): Promise<void> {
+    await this.request('write-file', { workspacePath, filePath, content });
   }
 
   public async runAgent(workspacePath: string, taskId: string, prompt: string, command: string): Promise<{ success: boolean; output: string; error?: string }> {

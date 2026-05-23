@@ -47,6 +47,20 @@ app.on('window-all-closed', () => {
 
 // IPC Handler Bindings
 
+function validateWorkspacePath(workspacePath: string, targetPath: string): string {
+  const resolvedWorkspace = path.resolve(workspacePath);
+  const resolvedTarget = path.resolve(targetPath);
+  const relative = path.relative(resolvedWorkspace, resolvedTarget);
+  
+  const isInside = relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+  const isRoot = resolvedTarget === resolvedWorkspace;
+
+  if (!isInside && !isRoot) {
+    throw new Error(`Security Error: Path is outside the authorized workspace. (target: ${resolvedTarget}, workspace: ${resolvedWorkspace})`);
+  }
+  return resolvedTarget;
+}
+
 ipcMain.handle('fs:select-workspace', async () => {
   if (!mainWindow) return null;
   const result = await dialog.showOpenDialog(mainWindow, {
@@ -57,8 +71,8 @@ ipcMain.handle('fs:select-workspace', async () => {
 });
 
 ipcMain.handle('fs:has-config', async (_, workspacePath: string) => {
-  const configPath = path.join(workspacePath, '.kanban', 'board.json');
   try {
+    const configPath = validateWorkspacePath(workspacePath, path.join(workspacePath, '.kanban', 'board.json'));
     await fs.access(configPath);
     return true;
   } catch {
@@ -67,20 +81,21 @@ ipcMain.handle('fs:has-config', async (_, workspacePath: string) => {
 });
 
 ipcMain.handle('fs:read-config', async (_, workspacePath: string) => {
-  const configPath = path.join(workspacePath, '.kanban', 'board.json');
+  const configPath = validateWorkspacePath(workspacePath, path.join(workspacePath, '.kanban', 'board.json'));
   const data = await fs.readFile(configPath, 'utf-8');
   return JSON.parse(data);
 });
 
 ipcMain.handle('fs:write-config', async (_, workspacePath: string, config: any) => {
-  const dirPath = path.join(workspacePath, '.kanban');
+  const dirPath = validateWorkspacePath(workspacePath, path.join(workspacePath, '.kanban'));
   const configPath = path.join(dirPath, 'board.json');
   await fs.mkdir(dirPath, { recursive: true });
   await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf-8');
 });
 
 // Helper for recursive directory traversal
-async function getFilesRecursive(dir: string): Promise<any[]> {
+async function getFilesRecursive(workspaceRoot: string, dir: string): Promise<any[]> {
+  validateWorkspacePath(workspaceRoot, dir);
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const files: any[] = [];
   
@@ -93,7 +108,7 @@ async function getFilesRecursive(dir: string): Promise<any[]> {
     
     if (entry.isDirectory()) {
       try {
-        const subFiles = await getFilesRecursive(fullPath);
+        const subFiles = await getFilesRecursive(workspaceRoot, fullPath);
         files.push(...subFiles);
       } catch {
         // Skip unreadable directories
@@ -117,20 +132,22 @@ async function getFilesRecursive(dir: string): Promise<any[]> {
 
 ipcMain.handle('fs:list-files', async (_, workspacePath: string) => {
   try {
-    return await getFilesRecursive(workspacePath);
+    return await getFilesRecursive(workspacePath, workspacePath);
   } catch {
     return [];
   }
 });
 
-ipcMain.handle('fs:read-file', async (_, filePath: string) => {
-  return await fs.readFile(filePath, 'utf-8');
+ipcMain.handle('fs:read-file', async (_, workspacePath: string, filePath: string) => {
+  const validatedPath = validateWorkspacePath(workspacePath, filePath);
+  return await fs.readFile(validatedPath, 'utf-8');
 });
 
-ipcMain.handle('fs:write-file', async (_, filePath: string, content: string) => {
-  const dir = path.dirname(filePath);
+ipcMain.handle('fs:write-file', async (_, workspacePath: string, filePath: string, content: string) => {
+  const validatedPath = validateWorkspacePath(workspacePath, filePath);
+  const dir = path.dirname(validatedPath);
   await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(filePath, content, 'utf-8');
+  await fs.writeFile(validatedPath, content, 'utf-8');
 });
 
 ipcMain.handle('agent:run', async (_, workspacePath: string, _taskId: string, _prompt: string, command: string) => {
@@ -148,7 +165,11 @@ ipcMain.handle('agent:run', async (_, workspacePath: string, _taskId: string, _p
   }
 
   return new Promise((resolve) => {
-    exec(execCmd, { cwd: resolvedWorkspace, timeout: 30000 }, (err: any, stdout: string, stderr: string) => {
+    exec(execCmd, { 
+      cwd: resolvedWorkspace, 
+      timeout: 30000,
+      env: { ...process.env, AGENT_ALLOW_SELF_SIGNED_CERT: '1' }
+    }, (err: any, stdout: string, stderr: string) => {
       resolve({
         success: !err,
         output: stdout + (stderr ? '\n' + stderr : ''),

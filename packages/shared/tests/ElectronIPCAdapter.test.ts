@@ -22,8 +22,8 @@ const mockElectron = {
       { name: 'board.json', path: `${path}/.kanban/board.json`, type: 'file', sizeBytes: 100 }
     ] as FileInfo[];
   },
-  readTextFile: async (path: string) => 'file contents',
-  writeTextFile: async (path: string, content: string) => {},
+  readTextFile: async (workspace: string, path: string) => 'file contents',
+  writeTextFile: async (workspace: string, path: string, content: string) => {},
 };
 
 before(() => {
@@ -91,20 +91,23 @@ test('listFiles - returns files list from bridge', async () => {
 
 test('readTextFile - returns content', async () => {
   const adapter = new ElectronIPCAdapter();
-  const content = await adapter.readTextFile('/Users/test/workspace/notes.md');
+  const content = await adapter.readTextFile('/Users/test/workspace', '/Users/test/workspace/notes.md');
   assert.strictEqual(content, 'file contents');
 });
 
 test('writeTextFile - calls bridge method', async () => {
+  let calledWorkspace = '';
   let calledPath = '';
   let calledContent = '';
-  window.electron.writeTextFile = async (path, content) => {
+  window.electron.writeTextFile = async (workspace, path, content) => {
+    calledWorkspace = workspace;
     calledPath = path;
     calledContent = content;
   };
   
   const adapter = new ElectronIPCAdapter();
-  await adapter.writeTextFile('/Users/test/workspace/notes.md', 'hello');
+  await adapter.writeTextFile('/Users/test/workspace', '/Users/test/workspace/notes.md', 'hello');
+  assert.strictEqual(calledWorkspace, '/Users/test/workspace');
   assert.strictEqual(calledPath, '/Users/test/workspace/notes.md');
   assert.strictEqual(calledContent, 'hello');
 });
