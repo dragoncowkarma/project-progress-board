@@ -1,0 +1,26 @@
+{
+  "id": "TSK-4.1",
+  "status": "Verified",
+  "description": "Configure electron-builder in apps/desktop_shell, package the application as an unpacked prototype directory, and write verification script check-desktop-package.js.",
+  "agent": "Antigravity",
+  "depends_on": [
+    "TSK-3.3"
+  ],
+  "mechanical_dod": {
+    "command": "node scripts/check-desktop-package.js",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 1,
+    "duration_seconds": 48,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "4de988121015e42584600aa8e3c59415bccc4189713465f93962de15dfabfdce",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Packaging the Electron prototype using electron-builder.",
+  "verification_mode": "standard"
+}

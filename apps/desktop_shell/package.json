@@ -1,18 +1,42 @@
 {
   "name": "desktop-shell",
   "version": "1.0.0",
+  "description": "Cross-platform Electron Kanban Dashboard prototype.",
+  "author": "Antigravity",
   "private": true,
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "package": "electron-builder build --dir"
   },
   "dependencies": {
     "shared": "*"
   },
   "devDependencies": {
-    "electron": "^30.0.0",
+    "electron": "30.0.0",
     "typescript": "^5.4.5",
-    "@types/node": "^20.12.12"
+    "@types/node": "^20.12.12",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.kanbanflow.app",
+    "productName": "KanbanFlow",
+    "directories": {
+      "output": "dist-packaged"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "../../packages/shared/dist/**/*",
+      "../../apps/web_frontend/dist/**/*"
+    ],
+    "mac": {
+      "target": "dir",
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "dir"
+    }
   }
 }
