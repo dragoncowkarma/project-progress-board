@@ -23,9 +23,10 @@ export function useKanban() {
       if (isElectron || isDevLocal) {
         // Filter out mock paths for local/desktop environments
         const filtered = list.filter(p => !p.startsWith('/Users/mock/'));
-        if (filtered.length !== list.length) {
-          localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(filtered));
+        if (!filtered.includes('/Users/macbook/Desktop/project-progress-board')) {
+          filtered.push('/Users/macbook/Desktop/project-progress-board');
         }
+        localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(filtered));
         return filtered;
       }
       return list;
@@ -38,7 +39,9 @@ export function useKanban() {
       localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(list));
       return list;
     }
-    return [];
+    const defaultList = ['/Users/macbook/Desktop/project-progress-board'];
+    localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(defaultList));
+    return defaultList;
   });
 
   // Initialize active workspace state
@@ -49,6 +52,9 @@ export function useKanban() {
       list = JSON.parse(stored) as string[];
       if (isElectron || isDevLocal) {
         list = list.filter(p => !p.startsWith('/Users/mock/'));
+        if (!list.includes('/Users/macbook/Desktop/project-progress-board')) {
+          list.push('/Users/macbook/Desktop/project-progress-board');
+        }
       }
     } else if (!isElectron && !isDevLocal) {
       list = [
@@ -56,6 +62,8 @@ export function useKanban() {
         '/Users/mock/Personal-Tasks',
         '/Users/mock/Enterprise-Core-SDK'
       ];
+    } else {
+      list = ['/Users/macbook/Desktop/project-progress-board'];
     }
     let active = localStorage.getItem('current_active_mock_workspace') || '';
     if (isElectron || isDevLocal) {

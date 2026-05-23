@@ -3,11 +3,20 @@
   "boardName": "project-progress-board",
   "columns": [
     {
+      "id": "col-4",
+      "title": "Expert Feedback",
+      "taskIds": [
+        "FEEDBACK-1",
+        "FEEDBACK-2",
+        "FEEDBACK-3",
+        "FEEDBACK-4",
+        "FEEDBACK-5"
+      ]
+    },
+    {
       "id": "col-1",
       "title": "Backlog",
-      "taskIds": [
-        "task-1"
-      ]
+      "taskIds": []
     },
     {
       "id": "col-2",
@@ -17,20 +26,207 @@
     {
       "id": "col-3",
       "title": "Done",
-      "taskIds": []
+      "taskIds": [
+        "TSK-1.1",
+        "TSK-1.2-RED",
+        "TSK-1.2-GREEN",
+        "TSK-2.1",
+        "TSK-2.2",
+        "TSK-2.3",
+        "TSK-2.4",
+        "TSK-3.1",
+        "TSK-3.2",
+        "TSK-3.3",
+        "TSK-4.1"
+      ]
     }
   ],
   "tasks": {
-    "task-1": {
-      "id": "task-1",
-      "title": "Welcome to Kanban Board",
-      "description": "This is a local dev card. Feel free to edit or drag-and-drop it.",
+    "FEEDBACK-1": {
+      "id": "FEEDBACK-1",
+      "title": "Security: Path Traversal Protection in Electron IPC",
+      "description": "[10-Year Desktop Shell Expert Feedback] Validate that all filesystem paths received by Electron IPC handlers in apps/desktop_shell/src/main.ts are strictly constrained within the active workspace directory to prevent arbitrary file read/write vulnerabilities.",
+      "priority": "high",
+      "checklists": [
+        {
+          "id": "fb1-cl1",
+          "text": "Add path resolution checks in fs:read-file",
+          "checked": false
+        },
+        {
+          "id": "fb1-cl2",
+          "text": "Add path resolution checks in fs:write-file",
+          "checked": false
+        },
+        {
+          "id": "fb1-cl3",
+          "text": "Create tests asserting out-of-bounds paths are rejected",
+          "checked": false
+        }
+      ]
+    },
+    "FEEDBACK-2": {
+      "id": "FEEDBACK-2",
+      "title": "Security: Restrict DevFilesystemBridge in Vite Proxy",
+      "description": "[10-Year Systems Engineer Feedback] Ensure that the vite dev server bridge middleware (/api/dev-fs) in vite.config.ts rejects file system read/write actions pointing outside the authorized workspace and project folders.",
+      "priority": "high",
+      "checklists": [
+        {
+          "id": "fb2-cl1",
+          "text": "Sanitize pathways in dev-fs middleware",
+          "checked": false
+        },
+        {
+          "id": "fb2-cl2",
+          "text": "Add validation testing for API endpoints",
+          "checked": false
+        }
+      ]
+    },
+    "FEEDBACK-3": {
+      "id": "FEEDBACK-3",
+      "title": "QA/Reliability: Add Zod Runtime Schema Validation",
+      "description": "[10-Year QA Expert Feedback] Define Zod schemas in packages/shared to validate board.json configuration files upon load. Gracefully handle malformed or version-deprecated JSON schemas without crashing the React UI.",
+      "priority": "medium",
+      "checklists": [
+        {
+          "id": "fb3-cl1",
+          "text": "Install zod in packages/shared if missing (present in package.json)",
+          "checked": true
+        },
+        {
+          "id": "fb3-cl2",
+          "text": "Define KanbanBoardConfigSchema using zod",
+          "checked": false
+        },
+        {
+          "id": "fb3-cl3",
+          "text": "Integrate validation schema inside readBoardConfig methods",
+          "checked": false
+        }
+      ]
+    },
+    "FEEDBACK-4": {
+      "id": "FEEDBACK-4",
+      "title": "UX: Implement Board Search and Card Filtering",
+      "description": "[10-Year Product Owner Feedback] Add a search filter input to the board header to let users filter tasks by title, description, or priority tag in real-time.",
+      "priority": "medium",
+      "checklists": [
+        {
+          "id": "fb4-cl1",
+          "text": "Add text input field to KanbanBoard header",
+          "checked": false
+        },
+        {
+          "id": "fb4-cl2",
+          "text": "Filter config.tasks in render loop based on search query",
+          "checked": false
+        }
+      ]
+    },
+    "FEEDBACK-5": {
+      "id": "FEEDBACK-5",
+      "title": "UI/UX: Theme Switcher & Smooth Drag Animations",
+      "description": "[10-Year UX Engineer Feedback] Enhance index.css with custom property theme palettes (light/dark mode toggle) and add CSS transitions/transforms during drag-and-drop actions for a fluid feel.",
+      "priority": "low",
+      "checklists": [
+        {
+          "id": "fb5-cl1",
+          "text": "Define CSS root variables for light-mode",
+          "checked": false
+        },
+        {
+          "id": "fb5-cl2",
+          "text": "Add theme switcher button in header",
+          "checked": false
+        },
+        {
+          "id": "fb5-cl3",
+          "text": "Apply transition transforms to card hover and drag state",
+          "checked": false
+        }
+      ]
+    },
+    "TSK-1.1": {
+      "id": "TSK-1.1",
+      "title": "Configure Monorepo workspace",
+      "description": "Configure Turborepo monorepo with npm workspaces and create packages/shared folder structure with base configuration files.",
+      "priority": "high",
+      "checklists": []
+    },
+    "TSK-1.2-RED": {
+      "id": "TSK-1.2-RED",
+      "title": "TDD Red: Implement IFileSystemAdapter & MockFileSystemAdapter",
+      "description": "Write failing tests for IFileSystemAdapter and MockFileSystemAdapter to assert storage simulation behavior.",
+      "priority": "critical",
+      "checklists": []
+    },
+    "TSK-1.2-GREEN": {
+      "id": "TSK-1.2-GREEN",
+      "title": "TDD Green: Implement IFileSystemAdapter & MockFileSystemAdapter",
+      "description": "Implement MockFileSystemAdapter methods to satisfy all unit tests and achieve 80%+ line coverage.",
+      "priority": "critical",
+      "checklists": []
+    },
+    "TSK-2.1": {
+      "id": "TSK-2.1",
+      "title": "Scaffold React UI layout",
+      "description": "Initialize apps/web_frontend workspace, configure Vite/TypeScript build config with relative paths, write Vanilla CSS theme layout, and build main App shell component.",
+      "priority": "high",
+      "checklists": []
+    },
+    "TSK-2.2": {
+      "id": "TSK-2.2",
+      "title": "Implement Drag-and-Drop engine",
+      "description": "Implement interactive HTML5 drag-and-drop mechanics in KanbanBoard component for sorting tasks within and across columns, and reordering columns.",
+      "priority": "critical",
+      "checklists": []
+    },
+    "TSK-2.3": {
+      "id": "TSK-2.3",
+      "title": "Create Mock Workspace Selection Modal",
+      "description": "Implement the WorkspaceSelector dialog overlay modal allowing creation and selection of custom workspace directories, and wire to the MockFileSystemAdapter.",
+      "priority": "medium",
+      "checklists": []
+    },
+    "TSK-2.4": {
+      "id": "TSK-2.4",
+      "title": "Build auto-save telemetry visual indicators",
+      "description": "Implement Task details modal panel, double-pane markdown previewer, checklist CRUD items editor, and debounced 1-second auto-save indicator loops.",
+      "priority": "low",
+      "checklists": []
+    },
+    "TSK-3.1": {
+      "id": "TSK-3.1",
+      "title": "Configure Electron initialization script",
+      "description": "Configure apps/desktop_shell, package.json dependencies, typescript compilation settings, and create the main process file main.ts to initialize BrowserWindow and handle IPC channels.",
+      "priority": "high",
+      "checklists": []
+    },
+    "TSK-3.2": {
+      "id": "TSK-3.2",
+      "title": "Write Preload Script ContextBridge whitelists",
+      "description": "Write apps/desktop_shell/src/preload.ts exposing safe contextBridge channel whitelists in isolation.",
+      "priority": "critical",
+      "checklists": []
+    },
+    "TSK-3.3": {
+      "id": "TSK-3.3",
+      "title": "Implement ElectronIPCAdapter and tie to runtime factory",
+      "description": "Implement ElectronIPCAdapter in shared package, write unit tests mock validating its behavior, export the class, and tie to dynamic runtime instantiation in useKanban.ts.",
+      "priority": "critical",
+      "checklists": []
+    },
+    "TSK-4.1": {
+      "id": "TSK-4.1",
+      "title": "Setup packaging distributions scripts",
+      "description": "Configure electron-builder in apps/desktop_shell, package the application as an unpacked prototype directory, and write verification script check-desktop-package.js.",
       "priority": "medium",
       "checklists": []
     }
   },
   "metadata": {
     "createdAt": "2026-05-23T10:42:42.360Z",
-    "updatedAt": "2026-05-23T10:42:42.360Z"
+    "updatedAt": "2026-05-23T20:59:00.000Z"
   }
 }

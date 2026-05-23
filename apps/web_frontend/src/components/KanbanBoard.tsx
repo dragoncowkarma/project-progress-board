@@ -29,6 +29,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   const [draggedCardId, setDraggedCardId] = useState<string | null>(null);
   const [draggedColId, setDraggedColId] = useState<string | null>(null);
   const [dragOverColId, setDragOverColId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const columnRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -164,6 +165,27 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     <div className="board-container">
       <div className="board-header">
         <h2 className="board-title">{config.boardName}</h2>
+        <div className="board-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div className="search-box" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <span style={{ position: 'absolute', left: '0.75rem', color: 'var(--text-muted)', fontSize: '0.9rem', pointerEvents: 'none' }}>🔍</span>
+            <input
+              type="text"
+              placeholder="Search tasks..."
+              className="input-field"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ paddingLeft: '2.25rem', width: '240px', height: '36px', fontSize: '0.85rem' }}
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                style={{ position: 'absolute', right: '0.75rem', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem', padding: 0 }}
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="columns-container" onDragOver={handleDragOverColContainer}>
@@ -215,6 +237,17 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 {column.taskIds.map((taskId) => {
                   const task = config.tasks[taskId];
                   if (!task) return null;
+
+                  // Apply search filtering
+                  if (searchQuery.trim()) {
+                    const query = searchQuery.toLowerCase();
+                    const matchesTitle = task.title.toLowerCase().includes(query);
+                    const matchesDesc = task.description?.toLowerCase().includes(query) || false;
+                    const matchesPriority = task.priority.toLowerCase().includes(query);
+                    if (!matchesTitle && !matchesDesc && !matchesPriority) {
+                      return null;
+                    }
+                  }
 
                   const checklist = task.checklists || [];
                   const totalItems = checklist.length;
