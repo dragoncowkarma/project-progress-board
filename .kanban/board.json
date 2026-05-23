@@ -16,7 +16,9 @@
     {
       "id": "col-1",
       "title": "Backlog",
-      "taskIds": []
+      "taskIds": [
+        "TEST-AI-PROMPT"
+      ]
     },
     {
       "id": "col-2",
@@ -42,6 +44,15 @@
     }
   ],
   "tasks": {
+    "TEST-AI-PROMPT": {
+      "id": "TEST-AI-PROMPT",
+      "title": "Test AI Agent Prompt Execution",
+      "description": "Double-click this card to edit its properties, customize the command, and test the Run Agent button. You can also run the agent directly from the card using the '⚡ Run' button.",
+      "priority": "medium",
+      "aiPrompt": "You are a test agent. Verify that you can parse this prompt successfully and that the runner executes the verification command without errors.",
+      "verificationCommand": "echo 'Agent prompt execution test passed successfully!'",
+      "checklists": []
+    },
     "FEEDBACK-1": {
       "id": "FEEDBACK-1",
       "title": "Security: Path Traversal Protection in Electron IPC",
