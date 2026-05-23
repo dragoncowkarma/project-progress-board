@@ -28,6 +28,19 @@ try {
   assert(fs.existsSync(mainPath), 'src/main.tsx should exist');
   assert(fs.existsSync(appPath), 'src/App.tsx should exist');
 
+  // 5. Regression Check: Verify shared library compiles to correct ESM exports
+  console.log('Verifying shared package module type and ESM outputs...');
+  const sharedPkgPath = path.join(__dirname, '../packages/shared/package.json');
+  assert(fs.existsSync(sharedPkgPath), 'packages/shared/package.json should exist');
+  const sharedPkg = require(sharedPkgPath);
+  assert.strictEqual(sharedPkg.type, 'module', 'packages/shared/package.json must be configured with "type": "module"');
+
+  const sharedIndexPath = path.join(__dirname, '../packages/shared/dist/index.js');
+  assert(fs.existsSync(sharedIndexPath), 'packages/shared/dist/index.js should exist (run npm run build first)');
+  const sharedIndexContent = fs.readFileSync(sharedIndexPath, 'utf8');
+  assert.ok(sharedIndexContent.includes('export * from'), 'packages/shared/dist/index.js must output ESM "export" syntax');
+  assert.ok(!sharedIndexContent.includes('exports.'), 'packages/shared/dist/index.js must not output CommonJS "exports" syntax');
+
   console.log('✅ Frontend scaffolding checks passed successfully!');
   process.exit(0);
 } catch (err) {
