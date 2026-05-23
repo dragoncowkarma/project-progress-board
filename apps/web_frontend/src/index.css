@@ -736,3 +736,49 @@ body {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+/* AI Prompt Styling */
+.card-prompt-badge-container {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+}
+
+.card-prompt-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 500;
+  font-family: var(--font-sans);
+}
+
+.card-prompt-btn:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+  transform: translateY(-1px);
+}
+
+.card-prompt-btn:active {
+  transform: translateY(0);
+}
+
+.card-prompt-btn.copied {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+.btn-copy-prompt-inline:hover {
+  background: rgba(168, 85, 247, 0.2) !important;
+  border-color: rgba(168, 85, 247, 0.5) !important;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.3) !important;
+}

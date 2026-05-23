@@ -78,8 +78,17 @@ test('writeBoardConfig - should serialize and write board config to localStorage
   const config: KanbanBoardConfig = {
     version: '2.0.0',
     boardName: 'Custom Board',
-    columns: [{ id: 'c1', title: 'To Do', taskIds: [] }],
-    tasks: {},
+    columns: [{ id: 'c1', title: 'To Do', taskIds: ['t1'] }],
+    tasks: {
+      't1': {
+        id: 't1',
+        title: 'Task 1',
+        description: 'Desc',
+        priority: 'medium',
+        aiPrompt: 'Translate this code',
+        checklists: []
+      }
+    },
     metadata: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
   };
   await adapter.writeBoardConfig(workspace, config);
@@ -87,6 +96,7 @@ test('writeBoardConfig - should serialize and write board config to localStorage
   assert.strictEqual(loaded.version, '2.0.0');
   assert.strictEqual(loaded.boardName, 'Custom Board');
   assert.strictEqual(loaded.columns[0].title, 'To Do');
+  assert.strictEqual(loaded.tasks['t1'].aiPrompt, 'Translate this code');
 });
 
 test('readTextFile - should throw error if file does not exist', async () => {

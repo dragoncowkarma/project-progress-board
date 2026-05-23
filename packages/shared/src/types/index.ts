@@ -26,6 +26,7 @@ export interface KanbanTask {
   description: string; // Markdown supported
   priority: 'low' | 'medium' | 'high';
   assignedAgent?: string;
+  aiPrompt?: string;
   checklists: Array<{
     id: string;
     text: string;

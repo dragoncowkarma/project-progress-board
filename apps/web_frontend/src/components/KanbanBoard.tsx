@@ -30,6 +30,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   const [draggedColId, setDraggedColId] = useState<string | null>(null);
   const [dragOverColId, setDragOverColId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [copiedTaskId, setCopiedTaskId] = useState<string | null>(null);
 
   const columnRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -273,6 +274,25 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                         <p className="card-body">
                           {task.description.replace(/[#*`-]/g, '').trim()}
                         </p>
+                      )}
+
+                      {task.aiPrompt && (
+                        <div className="card-prompt-badge-container" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            className={`card-prompt-btn ${copiedTaskId === task.id ? 'copied' : ''}`}
+                            onClick={() => {
+                              navigator.clipboard.writeText(task.aiPrompt || '');
+                              setCopiedTaskId(task.id);
+                              setTimeout(() => setCopiedTaskId(null), 2000);
+                            }}
+                            title="Copy AI System Prompt"
+                          >
+                            <span className="prompt-icon">{copiedTaskId === task.id ? '✓' : '🤖'}</span>
+                            <span className="prompt-text">
+                              {copiedTaskId === task.id ? 'Copied!' : 'Copy Prompt'}
+                            </span>
+                          </button>
+                        </div>
                       )}
 
                       {(totalItems > 0 || task.assignedAgent) && (

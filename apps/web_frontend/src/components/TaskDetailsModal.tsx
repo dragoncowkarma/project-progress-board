@@ -21,6 +21,7 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   const [title, setTitle] = useState(task ? task.title : '');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>(task ? task.priority : 'medium');
   const [description, setDescription] = useState(task ? task.description || '' : '');
+  const [aiPrompt, setAiPrompt] = useState(task ? task.aiPrompt || '' : '');
   const [checklistText, setChecklistText] = useState('');
 
   if (!isOpen || !task) return null;
@@ -169,6 +170,47 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                     dangerouslySetInnerHTML={{ __html: parseMarkdownToHtml(description) }}
                   />
                 </div>
+              </div>
+
+              <div className="form-group" style={{ marginTop: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                  <label htmlFor="task-ai-prompt-textarea" style={{ margin: 0 }}>🤖 AI System Prompt</label>
+                  {aiPrompt && (
+                    <button
+                      type="button"
+                      className="btn-copy-prompt-inline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(aiPrompt);
+                      }}
+                      style={{
+                        fontSize: '0.75rem',
+                        color: '#c084fc',
+                        background: 'rgba(168, 85, 247, 0.1)',
+                        border: '1px solid rgba(168, 85, 247, 0.25)',
+                        borderRadius: '0.25rem',
+                        padding: '0.2rem 0.5rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      📋 Copy Prompt
+                    </button>
+                  )}
+                </div>
+                <textarea
+                  id="task-ai-prompt-textarea"
+                  className="input-field"
+                  style={{ minHeight: '80px', resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}
+                  placeholder="Enter specific instructions/prompts for AI agents executing this task..."
+                  value={aiPrompt}
+                  onChange={(e) => {
+                    setAiPrompt(e.target.value);
+                    onUpdateTask(task.id, { aiPrompt: e.target.value });
+                  }}
+                />
               </div>
             </div>
             

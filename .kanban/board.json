@@ -63,7 +63,8 @@
           "text": "Create tests asserting out-of-bounds paths are rejected",
           "checked": false
         }
-      ]
+      ],
+      "aiPrompt": ""
     },
     "FEEDBACK-2": {
       "id": "FEEDBACK-2",
@@ -227,6 +228,6 @@
   },
   "metadata": {
     "createdAt": "2026-05-23T10:42:42.360Z",
-    "updatedAt": "2026-05-23T20:59:00.000Z"
+    "updatedAt": "2026-05-23T16:38:01.580Z"
   }
 }

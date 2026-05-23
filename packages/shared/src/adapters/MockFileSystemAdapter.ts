@@ -83,6 +83,7 @@ export class MockFileSystemAdapter implements IFileSystemAdapter {
           title: 'Welcome to Kanban Board',
           description: 'This is a mock card. Feel free to edit or drag-and-drop it.',
           priority: 'medium',
+          aiPrompt: 'You are an AI assistant helping the user configure their progress board. Assist them in writing clear descriptions, task titles, and setting appropriate priorities.',
           checklists: []
         }
       },
