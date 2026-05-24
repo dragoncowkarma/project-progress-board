@@ -1,0 +1,24 @@
+{
+  "id": "TEST-AI-PROMPT",
+  "status": "Verified",
+  "description": "Double-click this card to edit its properties, customize the command, and test the Run Agent button. You can also run the agent directly from the card using the '⚡ Run' button.",
+  "agent": "Antigravity",
+  "depends_on": [],
+  "mechanical_dod": {
+    "command": "npm run verify:prompt",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 2,
+    "duration_seconds": 174,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "9035d728eb2fef9f3a7384e4bd227815a85144de8f27ddb82c2d8e4762a1b434",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Starting test AI prompt execution.",
+  "verification_mode": "standard"
+}

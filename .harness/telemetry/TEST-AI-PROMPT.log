@@ -1,0 +1,10 @@
+
+> verify:prompt
+> AGENT_ALLOW_SELF_SIGNED_CERT=1 gemini -p "You are a test agent. Verify that you can parse this prompt successfully and that the runner executes the verification command without errors. DO NOT call any tools or execute any commands. Just write a summary stating that you received the prompt successfully, and exit."
+
+Warning: 256-color support not detected. Using a terminal with at least 256-color support is recommended for a better visual experience.
+Ripgrep is not available. Falling back to GrepTool.
+MCP issues detected. Run /mcp list for status.
+I have successfully received and parsed your prompt. This summary confirms that the agent is operational and ready to process instructions within the provided context. No tools or commands have been executed, as per your instruction.
+
+[salt:TEST-AI-PROMPT:1779620674.N]

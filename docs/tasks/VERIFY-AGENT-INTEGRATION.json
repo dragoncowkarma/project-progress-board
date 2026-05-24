@@ -1,0 +1,24 @@
+{
+  "id": "VERIFY-AGENT-INTEGRATION",
+  "status": "Verified",
+  "description": "Double-click this card to test prompt passing and shell escaping. Running this card executes a script that asserts quotes and special characters are grouped into a single argument.",
+  "agent": "Antigravity",
+  "depends_on": [],
+  "mechanical_dod": {
+    "command": "npm run verify:agent",
+    "expected_exit_code": 0
+  },
+  "metrics": {
+    "tokens_used": 0,
+    "retry_count": 0,
+    "duration_seconds": 0,
+    "coverage": "100.00%",
+    "mutation_score": "N/A"
+  },
+  "approved": false,
+  "telemetry_hash": "cec4e159cacfac1e4656ff6c87c9c7b572f1d574e5af8592d65470d7cf7935f8",
+  "assigned_sub_agent": null,
+  "sub_task_status": "Pending",
+  "delta_note": "Starting agent runner verification.",
+  "verification_mode": "standard"
+}

@@ -1,0 +1,23 @@
+
+> verify:agent
+> node scripts/test-agent-runner.js "Verify that \"double quotes\" and special characters like & or | are escaped and read as a single argument."
+
+=========================================
+🤖 AGENT RUNNER VERIFICATION SCRIPT
+=========================================
+Analyzing received prompt...
+Prompt length: 105 characters
+Raw Prompt: "Verify that "double quotes" and special characters like & or | are escaped and read as a single argument."
+-----------------------------------------
+Performing integration validations...
+✓ Arguments count check: Passed (1 argument)
+- Shell escaping check: Verified (Quotes handled safely)
+-----------------------------------------
+🤖 Simulated Agent Action:
+- Step 1: Parsing prompt instructions...
+- Step 2: Locating codebase symbols...
+- Step 3: Executing TDD green tests...
+✅ Evaluation: Prompt delivery and shell execution are fully verified!
+=========================================
+
+[salt:VERIFY-AGENT-INTEGRATION:1779620148.N]
