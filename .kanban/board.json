@@ -17,7 +17,8 @@
       "id": "col-1",
       "title": "Backlog",
       "taskIds": [
-        "TEST-AI-PROMPT"
+        "TEST-AI-PROMPT",
+        "VERIFY-AGENT-INTEGRATION"
       ]
     },
     {
@@ -50,7 +51,16 @@
       "description": "Double-click this card to edit its properties, customize the command, and test the Run Agent button. You can also run the agent directly from the card using the '⚡ Run' button.",
       "priority": "medium",
       "aiPrompt": "You are a test agent. Verify that you can parse this prompt successfully and that the runner executes the verification command without errors.",
-      "agentCommandTemplate": "echo \"AI Prompt matches: {{prompt}}\"",
+      "agentCommandTemplate": "AGENT_ALLOW_SELF_SIGNED_CERT=1 gemini -p \"{{prompt}}\"",
+      "checklists": []
+    },
+    "VERIFY-AGENT-INTEGRATION": {
+      "id": "VERIFY-AGENT-INTEGRATION",
+      "title": "Verify Agent Prompt Integration",
+      "description": "Double-click this card to test prompt passing and shell escaping. Running this card executes a script that asserts quotes and special characters are grouped into a single argument.",
+      "priority": "high",
+      "aiPrompt": "Verify that \"double quotes\" and special characters like & or | are escaped and read as a single argument.",
+      "agentCommandTemplate": "node scripts/test-agent-runner.js \"{{prompt}}\"",
       "checklists": []
     },
     "FEEDBACK-1": {
@@ -239,6 +249,6 @@
   },
   "metadata": {
     "createdAt": "2026-05-23T10:42:42.360Z",
-    "updatedAt": "2026-05-23T16:38:01.580Z"
+    "updatedAt": "2026-05-23T17:12:22.205Z"
   }
 }

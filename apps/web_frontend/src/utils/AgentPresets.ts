@@ -7,8 +7,13 @@ export interface AgentPreset {
 export const AGENT_PRESETS: AgentPreset[] = [
   {
     id: 'antigravity',
-    name: 'Antigravity (Harness)',
-    template: './scripts/harness.sh test --id {{taskId}} --cmd "npm run test" --prompt "{{prompt}}"'
+    name: 'Antigravity (agy)',
+    template: 'AGENT_ALLOW_SELF_SIGNED_CERT=1 agy --prompt "{{prompt}}"'
+  },
+  {
+    id: 'gemini',
+    name: 'Gemini',
+    template: 'AGENT_ALLOW_SELF_SIGNED_CERT=1 gemini -p "{{prompt}}"'
   },
   {
     id: 'claude',

@@ -207,7 +207,11 @@ function devFilesystemBridgePlugin() {
                   return;
                 }
 
-                exec(execCmd, { cwd: resolvedWorkspace, timeout: 30000 }, (err, stdout, stderr) => {
+                exec(execCmd, { 
+                  cwd: resolvedWorkspace, 
+                  timeout: 30000,
+                  env: { ...process.env, AGENT_ALLOW_SELF_SIGNED_CERT: '1' }
+                }, (err, stdout, stderr) => {
                   res.writeHead(200, { 'Content-Type': 'application/json' });
                   res.end(JSON.stringify({
                     success: !err,
