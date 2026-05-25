@@ -1,7 +1,19 @@
-import fixPath from 'fix-path';
-
 // macOS GUI 환경에서 글로벌/시스템 환경 변수(PATH)를 올바르게 인식하도록 강제 주입
-fixPath();
+if (process.platform !== 'win32') {
+  try {
+    // TypeScript compiles import() to require() in CommonJS module mode.
+    // We bypass this using eval('import()') so the runtime loads the ESM version.
+    eval('import("fix-path")').then((m: any) => {
+      if (m && typeof m.default === 'function') {
+        m.default();
+      }
+    }).catch((err: any) => {
+      console.error('Failed to run fix-path:', err);
+    });
+  } catch (err) {
+    console.error('Failed to initialize fix-path:', err);
+  }
+}
 
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as fs from 'fs/promises';
@@ -87,8 +99,42 @@ ipcMain.handle('fs:has-config', async (_, workspacePath: string) => {
 
 ipcMain.handle('fs:read-config', async (_, workspacePath: string) => {
   const configPath = validateWorkspacePath(workspacePath, path.join(workspacePath, '.kanban', 'board.json'));
-  const data = await fs.readFile(configPath, 'utf-8');
-  return JSON.parse(data);
+  try {
+    const data = await fs.readFile(configPath, 'utf-8');
+    return JSON.parse(data);
+  } catch (e: any) {
+    if (e.code === 'ENOENT') {
+      const boardName = path.basename(workspacePath) || 'New Workspace';
+      const defaultConfig = {
+        version: '1.0.0',
+        boardName: boardName,
+        columns: [
+          { id: 'col-1', title: 'Backlog', taskIds: ['task-1'] },
+          { id: 'col-2', title: 'In Progress', taskIds: [] },
+          { id: 'col-3', title: 'Done', taskIds: [] }
+        ],
+        tasks: {
+          'task-1': {
+            id: 'task-1',
+            title: 'Welcome to Kanban Board',
+            description: 'This is a local dev card. Feel free to edit or drag-and-drop it.',
+            priority: 'medium',
+            aiPrompt: 'You are an AI assistant helping the user configure their progress board. Assist them in writing clear descriptions, task titles, and setting appropriate priorities.',
+            checklists: []
+          }
+        },
+        metadata: {
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      };
+      const dirPath = validateWorkspacePath(workspacePath, path.join(workspacePath, '.kanban'));
+      await fs.mkdir(dirPath, { recursive: true });
+      await fs.writeFile(configPath, JSON.stringify(defaultConfig, null, 2), 'utf-8');
+      return defaultConfig;
+    }
+    throw e;
+  }
 });
 
 ipcMain.handle('fs:write-config', async (_, workspacePath: string, config: any) => {
