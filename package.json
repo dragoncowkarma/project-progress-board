@@ -11,6 +11,7 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "dev": "turbo run dev",
+    "package": "turbo run package",
     "verify:agent": "node scripts/test-agent-runner.js \"Verify that \\\"double quotes\\\" and special characters like & or | are escaped and read as a single argument.\"",
     "verify:prompt": "AGENT_ALLOW_SELF_SIGNED_CERT=1 gemini -p \"You are a test agent. Verify that you can parse this prompt successfully and that the runner executes the verification command without errors. DO NOT call any tools or execute any commands. Just write a summary stating that you received the prompt successfully, and exit.\""
   },

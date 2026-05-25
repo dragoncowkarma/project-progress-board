@@ -11,13 +11,14 @@
     "package": "electron-builder build --dir"
   },
   "dependencies": {
+    "fix-path": "^5.0.0",
     "shared": "*"
   },
   "devDependencies": {
-    "electron": "30.0.0",
-    "typescript": "^5.4.5",
     "@types/node": "^20.12.12",
-    "electron-builder": "^24.13.3"
+    "electron": "30.0.0",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.4.5"
   },
   "build": {
     "appId": "com.kanbanflow.app",
@@ -28,8 +29,10 @@
     "files": [
       "dist/**/*",
       "package.json",
-      "../../packages/shared/dist/**/*",
-      "../../apps/web_frontend/dist/**/*"
+      {
+        "from": "../../apps/web_frontend/dist",
+        "to": "web_frontend/dist"
+      }
     ],
     "mac": {
       "target": "dir",

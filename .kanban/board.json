@@ -17,8 +17,8 @@
       "id": "col-1",
       "title": "Backlog",
       "taskIds": [
-        "TEST-AI-PROMPT",
-        "VERIFY-AGENT-INTEGRATION"
+        "VERIFY-AGENT-INTEGRATION",
+        "TEST-AI-PROMPT"
       ]
     },
     {
@@ -249,6 +249,6 @@
   },
   "metadata": {
     "createdAt": "2026-05-23T10:42:42.360Z",
-    "updatedAt": "2026-05-23T17:12:22.205Z"
+    "updatedAt": "2026-05-25T09:33:50.287Z"
   }
 }

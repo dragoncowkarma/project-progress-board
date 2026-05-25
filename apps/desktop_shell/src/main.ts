@@ -1,3 +1,8 @@
+import fixPath from 'fix-path';
+
+// macOS GUI 환경에서 글로벌/시스템 환경 변수(PATH)를 올바르게 인식하도록 강제 주입
+fixPath();
+
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -21,7 +26,7 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../../web_frontend/dist/index.html'));
+    mainWindow.loadFile(path.join(app.getAppPath(), 'web_frontend/dist/index.html'));
   }
 
   mainWindow.on('closed', () => {
