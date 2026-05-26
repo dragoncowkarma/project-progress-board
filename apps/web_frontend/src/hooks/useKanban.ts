@@ -168,6 +168,23 @@ export function useKanban() {
     loadWorkspace(path);
   }, [workspaces, loadWorkspace]);
 
+  const handleDeleteWorkspace = useCallback((pathToDelete: string) => {
+    const newList = workspaces.filter(p => p !== pathToDelete);
+    setWorkspaces(newList);
+    localStorage.setItem(WORKSPACE_LIST_KEY, JSON.stringify(newList));
+    if (activeWorkspace === pathToDelete) {
+      const nextActive = newList.length > 0 ? newList[0] : '';
+      if (nextActive) {
+        loadWorkspace(nextActive);
+      } else {
+        setActiveWorkspace('');
+        setBoardConfig(null);
+        localStorage.removeItem('current_active_mock_workspace');
+      }
+    }
+    showToast(`Removed workspace: ${pathToDelete.split('/').pop()}`, 'success');
+  }, [workspaces, activeWorkspace, loadWorkspace, showToast]);
+
   // Column CRUD Operations
   const addColumn = (title: string) => {
     if (!boardConfig) return;
@@ -385,6 +402,7 @@ export function useKanban() {
     setToastMessage,
     handleSelectWorkspace,
     handleCreateWorkspace,
+    handleDeleteWorkspace,
     addColumn,
     deleteColumn,
     renameColumn,

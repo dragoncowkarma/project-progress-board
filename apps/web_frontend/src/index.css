@@ -221,6 +221,23 @@ body {
   color: #c084fc;
 }
 
+.delete-workspace-btn {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  color: var(--text-muted);
+}
+
+.workspace-item:hover .delete-workspace-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.delete-workspace-btn:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+}
+
 .board-container {
   flex: 1;
   display: flex;

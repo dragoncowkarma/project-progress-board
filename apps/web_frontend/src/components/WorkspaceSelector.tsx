@@ -7,6 +7,7 @@ interface WorkspaceSelectorProps {
   activeWorkspace: string;
   onSelectWorkspace: (path: string) => void;
   onCreateWorkspace: (path: string) => void;
+  onDeleteWorkspace: (path: string) => void;
   onBrowseWorkspace?: () => Promise<string | null>;
   isLocalEnv?: boolean;
 }
@@ -18,6 +19,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
   activeWorkspace,
   onSelectWorkspace,
   onCreateWorkspace,
+  onDeleteWorkspace,
   onBrowseWorkspace,
   isLocalEnv = false,
 }) => {
@@ -84,12 +86,28 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                       onSelectWorkspace(path);
                       onClose();
                     }}
+                    style={{ position: 'relative', paddingRight: '3rem' }}
                   >
-                    <div>
-                      <strong style={{ display: 'block', color: isActive ? 'inherit' : 'var(--text-main)' }}>{name}</strong>
-                      <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>{path}</span>
+                    <div style={{ flex: 1, minWidth: 0, paddingRight: '0.5rem' }}>
+                      <strong style={{ display: 'block', color: isActive ? 'inherit' : 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</strong>
+                      <span style={{ fontSize: '0.75rem', opacity: 0.7, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{path}</span>
                     </div>
-                    {isActive && <span className="status-dot"></span>}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'absolute', right: '0.8rem', top: '50%', transform: 'translateY(-50%)' }}>
+                      {isActive && <span className="status-dot" style={{ position: 'static', margin: 0 }}></span>}
+                      <button
+                        className="btn-icon-only delete-workspace-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(`Remove workspace "${name}" from recent list?`)) {
+                            onDeleteWorkspace(path);
+                          }
+                        }}
+                        title="Remove from list"
+                        style={{ fontSize: '1.1rem', lineHeight: 1, padding: '2px 6px' }}
+                      >
+                        ×
+                      </button>
+                    </div>
                   </div>
                 );
               })}

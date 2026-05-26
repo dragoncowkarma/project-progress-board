@@ -17,6 +17,7 @@ function App() {
     setToastMessage,
     handleSelectWorkspace,
     handleCreateWorkspace,
+    handleDeleteWorkspace,
     addColumn,
     deleteColumn,
     renameColumn,
@@ -136,7 +137,20 @@ function App() {
                     className={`workspace-item ${isActive ? 'active' : ''}`}
                     onClick={() => handleSelectWorkspace(path)}
                   >
-                    <span>{name}</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
+                    <button
+                      className="btn-icon-only delete-workspace-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm(`Remove workspace "${name}" from recent list?`)) {
+                          handleDeleteWorkspace(path);
+                        }
+                      }}
+                      title="Remove from list"
+                      style={{ padding: '0px 4px', fontSize: '1rem', lineHeight: 1 }}
+                    >
+                      ×
+                    </button>
                   </div>
                 );
               })}
@@ -189,6 +203,7 @@ function App() {
         activeWorkspace={activeWorkspace}
         onSelectWorkspace={handleSelectWorkspace}
         onCreateWorkspace={handleCreateWorkspace}
+        onDeleteWorkspace={handleDeleteWorkspace}
         onBrowseWorkspace={envName !== 'mock' ? browseWorkspace : undefined}
         isLocalEnv={envName !== 'mock'}
       />
